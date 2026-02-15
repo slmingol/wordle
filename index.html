@@ -4,6 +4,16 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+	<meta http-equiv="Content-Security-Policy" 
+		content="default-src 'self'; 
+				 script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; 
+				 style-src 'self' 'unsafe-inline'; 
+				 img-src 'self' data: https:; 
+				 font-src 'self' data:; 
+				 connect-src 'self' https://api.dictionaryapi.dev https://www.google-analytics.com; 
+				 frame-ancestors 'none'; 
+				 base-uri 'self'; 
+				 form-action 'self';">
 
 	<meta name="theme-color" content="#6aaa64" />
 	<link rel="manifest" href="manifest.json">
@@ -24,18 +34,11 @@
 	<meta property="og:description" content="Guess the word in 6 tries. Play daily, hourly and infinite modes.">
 	<meta property="og:image" content="https://mikhad.github.io/wordle/img/og_1200x630.png">
 
-	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<!-- Google Analytics - Loaded only with user consent via CookieConsent component -->
 	<meta name="google-site-verification" content="nfr4xQiyHWYkamHQq6M7E9kXoXp8tmNihRU0c5yXjlw" />
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-RHN319RJ6V"></script>
 	<script>
+		// PWA Service worker
 		if (document.location.origin === "https://mikhad.github.io") {
-			// Google Analytics
-			window.dataLayer = window.dataLayer || [];
-			function gtag() { dataLayer.push(arguments); }
-			gtag('js', new Date());
-			gtag('config', 'G-RHN319RJ6V');
-
-			// PWA Service worker
 			if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
 		}
 	</script>

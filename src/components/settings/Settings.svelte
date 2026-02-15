@@ -88,12 +88,30 @@
 				</svg>
 			</svelte:fragment>
 		</Setting>
+		<Setting type="button">
+			<svelte:fragment slot="title">Privacy Settings</svelte:fragment>
+			<svelte:fragment slot="desc">Manage cookie consent and analytics preferences</svelte:fragment>
+			<svelte:fragment slot="custom">
+				<button
+					class="privacy-button"
+					on:click={() => {
+						localStorage.removeItem('analytics-consent');
+						toaster.pop('Consent reset. Reload to see banner.');
+					}}
+				>
+					Reset Consent
+				</button>
+			</svelte:fragment>
+		</Setting>
 		<div class="links">
 			<a href="https://github.com/MikhaD/wordle" target="_blank" rel="noreferrer">
 				Leave a ⭐
 			</a>
 			<a href="https://github.com/MikhaD/wordle/issues" target="_blank" rel="noreferrer">
 				Report a Bug
+			</a>
+			<a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">
+				Privacy Policy
 			</a>
 		</div>
 	</div>
@@ -111,6 +129,8 @@
 		color: var(--fg-secondary);
 		display: flex;
 		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.5rem;
 	}
 	:global(.settings-top > div) {
 		padding: 16px 0;
@@ -120,5 +140,19 @@
 		height: 2rem;
 		fill: var(--fg-secondary);
 		cursor: pointer;
+	}
+	.privacy-button {
+		background: var(--bg-secondary);
+		color: var(--fg-primary);
+		border: 1px solid var(--border-primary);
+		border-radius: 4px;
+		padding: 0.5rem 1rem;
+		font-size: var(--fs-small);
+		cursor: pointer;
+		transition: opacity 0.2s;
+
+		&:hover {
+			opacity: 0.8;
+		}
 	}
 </style>

@@ -8,4 +8,5 @@ export { default as Tips } from "./Tips.svelte";
 export { default as ContextMenu } from "./ContextMenu.svelte";
 export { default as ShareGame } from "./ShareGame.svelte";
 export { default as Historical } from "./Historical.svelte";
+export { default as CookieConsent } from "./CookieConsent.svelte";
 export * from "./stats";

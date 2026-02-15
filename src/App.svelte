@@ -12,7 +12,7 @@
 	import Game from "./components/Game.svelte";
 	import { letterStates, settings, mode } from "./stores";
 	import { GameMode } from "./enums";
-	import { Toaster } from "./components/widgets";
+	import { Toaster, CookieConsent } from "./components/widgets";
 	import { setContext } from "svelte";
 
 	document.title = "Wordle+ | An infinite word guessing game";
@@ -65,6 +65,7 @@
 	}
 </script>
 
+<CookieConsent />
 <Toaster bind:this={toaster} />
 {#if toaster}
 	<Game {stats} bind:word {toaster} bind:game={state} />
