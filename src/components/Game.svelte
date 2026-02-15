@@ -5,20 +5,20 @@
 	import Keyboard from "./keyboard";
 	import Modal from "./Modal.svelte";
 	import { getContext, onMount, setContext } from "svelte";
-	import Settings from "./settings";
+	import SettingsLazy from "./settings/SettingsLazy.svelte";
 	import {
 		Share,
 		Separator,
 		Definition,
-		Tutorial,
-		Statistics,
-		Distribution,
 		Timer,
 		Toaster,
 		ShareGame,
 		Tips,
 		Historical,
 	} from "./widgets";
+	// Lazy loaded components
+	import TutorialLazy from "./widgets/TutorialLazy.svelte";
+	import { StatisticsLazy, Distribution } from "./widgets/stats";
 	import {
 		contractNum,
 		DELAY_INCREMENT,
@@ -205,14 +205,14 @@
 	on:close|once={() => $settings.tutorial === 3 && --$settings.tutorial}
 	fullscreen={$settings.tutorial === 0}
 >
-	<Tutorial visible={showTutorial} />
+	<TutorialLazy visible={showTutorial} />
 </Modal>
 
 <Modal bind:visible={showStats}>
 	{#if modeData.modes[$mode].historical}
 		<h2 class="historical">Statistics not available for historical games</h2>
 	{:else}
-		<Statistics data={stats} />
+		<StatisticsLazy visible={showStats} data={stats} />
 		<Distribution distribution={stats.guesses} {game} />
 	{/if}
 	<Separator visible={!game.active}>
@@ -239,7 +239,7 @@
 </Modal>
 
 <Modal fullscreen={true} bind:visible={showSettings}>
-	<Settings state={game} on:historical={() => (showHistorical = true)} />
+	<SettingsLazy visible={showSettings} state={game} on:historical={() => (showHistorical = true)} />
 	{#if game.active}
 		<div
 			class="button concede"

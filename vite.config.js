@@ -9,12 +9,27 @@ export default defineConfig({
     preprocess: vitePreprocess()
   })],
   build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.logs in production
+        drop_debugger: true,
+        pure_funcs: ['console.log'] // Remove specific functions
+      }
+    },
     rollupOptions: {
       output: {
         assetFileNames: `[name]-v${version}.[ext]`,
         entryFileNames: `[name]-v${version}.js`,
         dir: "./dist",
+        manualChunks: {
+          // Split vendor code
+          'vendor': ['svelte', 'svelte/store', 'svelte/transition'],
+          // Split word list (largest data)
+          'words': ['./src/words_5.ts'],
+        }
       }
-    }
+    },
+    chunkSizeWarningLimit: 500 // Increase limit for word list
   }
 });
