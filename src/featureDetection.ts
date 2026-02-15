@@ -100,9 +100,16 @@ export function hasWebWorkers(): boolean {
  */
 export function hasES6(): boolean {
 	try {
-		// Check for arrow functions, const/let, template literals
-		new Function("const arrow = () => {}; let test = `template`; return true;")();
-		return true;
+		// Check for ES6 features without using Function constructor (CSP-friendly)
+		// Check for: const/let, arrow functions, template literals, spread, destructuring
+		const testObj = { a: 1, b: 2 };
+		const { a, ...rest } = testObj;
+		const arr = [1, 2, 3];
+		const [first, ...remaining] = arr;
+		const arrowFn = () => true;
+		const template = `test ${a}`;
+
+		return typeof Promise !== "undefined" && typeof Symbol !== "undefined";
 	} catch (e) {
 		return false;
 	}
