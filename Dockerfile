@@ -9,7 +9,7 @@ COPY package*.json ./
 # Stage 2: Development
 FROM base AS development
 ENV NODE_ENV=development
-RUN npm ci
+RUN npm install
 COPY . .
 EXPOSE 5173
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
@@ -17,7 +17,7 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 # Stage 3: Build
 FROM base AS builder
 ENV NODE_ENV=production
-RUN npm ci
+RUN npm install --production=false
 COPY . .
 RUN npm run build
 
