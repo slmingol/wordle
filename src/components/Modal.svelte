@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from "svelte";
+	import { createEventDispatcher, onMount } from "svelte";
 
 	import GameIcon from "./GameIcon.svelte";
 
@@ -12,23 +12,37 @@
 		visible = false;
 		dispatch("close");
 	}
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape' && visible) {
+			close();
+		}
+	}
+
+	onMount(() => {
+		window.addEventListener('keydown', handleKeydown);
+		return () => window.removeEventListener('keydown', handleKeydown);
+	});
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div
 	class:visible
 	class="overlay {fullscreen ? 'fullscreen' : 'popup'}"
+	role="dialog"
+	aria-modal="true"
 	on:click|self={close}
-	on:keydown|self={close}
 >
 	<div class="modal">
-		<div class="exit" on:click={close} on:keydown={close}>
+		<div class="exit" role="button" tabindex="0" aria-label="Close" on:click={close} on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && close()}>
 			<GameIcon>
 				<path
 					d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
 				/>
 			</GameIcon>
 		</div>
-		<div class="content" on:close={close}>
+		<div class="content">
 			<slot />
 		</div>
 		<div class="footer">

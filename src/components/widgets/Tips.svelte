@@ -32,16 +32,22 @@
 	<div class="tip">{tips[index]}</div>
 	<svg
 		class="left"
+		role="button"
+		tabindex="0"
+		aria-label="Previous tip"
 		on:click={previousTip}
-		on:keydown={previousTip}
+		on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && previousTip()}
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 100 100"
 	>
 		<path d="M75,0L25,50L75,100z" />
 	</svg>
 	<svg
+		role="button"
+		tabindex="0"
+		aria-label="Next tip"
 		on:click={nextTip}
-		on:keypress={nextTip}
+		on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && nextTip()}
 		class="right"
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 100 100"

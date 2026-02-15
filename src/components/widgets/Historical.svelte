@@ -113,6 +113,9 @@
 </div>
 <div>Enter a game number between 1 and {getWordNumber($mode, true) - 1}</div>
 <div
+	role="button"
+	tabindex="0"
+	aria-label="Load historical game"
 	class:disabled={!validLink && !validNumber}
 	class="button"
 	on:click={submit}

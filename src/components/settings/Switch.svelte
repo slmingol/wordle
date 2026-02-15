@@ -3,8 +3,7 @@
 	export let disabled = false;
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div on:click={(e) => !disabled && (value = !value)} class:checked={value} {disabled} />
+<div role="switch" tabindex="0" aria-checked={value} on:click={() => !disabled && (value = !value)} on:keydown={(e) => !disabled && (e.key === 'Enter' || e.key === ' ') && (value = !value)} class:checked={value} aria-disabled={disabled} />
 
 <style lang="scss">
 	div[disabled="true"] {

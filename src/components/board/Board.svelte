@@ -91,9 +91,12 @@
 	{#if tutorial}
 		<div
 			transition:scale
+			role="button"
+			tabindex="0"
+			aria-label="Dismiss tutorial"
 			class="tutorial"
 			on:click={() => dispatch("closeTutPopUp")}
-			on:keydown={() => dispatch("closeTutPopUp")}
+			on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && dispatch("closeTutPopUp")}
 		>
 			double tap a row to see a word's definition, or how many words can be played there
 			<span class="ok">OK</span>

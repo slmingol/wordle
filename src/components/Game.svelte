@@ -225,9 +225,12 @@
 		<!-- Fade with delay is to prevent a bright red button from appearing as soon as refresh is pressed -->
 		<div
 			in:fade={{ delay: 300 }}
+			role="button"
+			tabindex="0"
+			aria-label="Give up on current game"
 			class="button concede"
 			on:click={concede}
-			on:keydown={concede}
+			on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && concede()}
 		>
 			give up
 		</div>
@@ -237,7 +240,7 @@
 <Modal fullscreen={true} bind:visible={showSettings}>
 	<Settings state={game} on:historical={() => (showHistorical = true)} />
 	{#if game.active}
-		<div class="button concede" on:click={concede} on:keydown={concede}>give up</div>
+		<div class="button concede" role="button" tabindex="0" aria-label="Give up on current game" on:click={concede} on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && concede()}>give up</div>
 	{/if}
 	<Tips change={showSettings} />
 
@@ -248,7 +251,10 @@
 		<div>
 			<div>v{version}</div>
 			<div
+				role="button"
+				tabindex="0"
 				title="double click to reset your stats"
+				aria-label="Double click to reset statistics"
 				class="word"
 				on:dblclick={() => {
 					localStorage.clear();

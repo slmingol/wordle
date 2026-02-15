@@ -36,19 +36,27 @@
 			</GameIcon>
 		{/if}
 	</div>
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<h1
+	<button
+		class="title-button"
+		tabindex="0"
+		aria-label="Switch game mode (click to cycle forward, right-click for backward)"
 		on:click|self={() => {
 			$mode = ($mode + 1) % modeData.modes.length;
 			toaster.pop(modeData.modes[$mode].name);
+		}}
+		on:keydown|self={(e) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				$mode = ($mode + 1) % modeData.modes.length;
+				toaster.pop(modeData.modes[$mode].name);
+			}
 		}}
 		on:contextmenu|preventDefault|self={() => {
 			$mode = ($mode - 1 + modeData.modes.length) % modeData.modes.length;
 			toaster.pop(modeData.modes[$mode].name);
 		}}
 	>
-		wordle+
-	</h1>
+		<h1>wordle+</h1>
+	</button>
 	<div class="icons">
 		{#if showStats}
 			<GameIcon onClick={() => dispatch("stats")}>
@@ -67,9 +75,12 @@
 	{#if tutorial}
 		<div
 			transition:scale
+			role="button"
+			tabindex="0"
+			aria-label="Dismiss tutorial"
 			class="tutorial"
 			on:click={() => dispatch("closeTutPopUp")}
-			on:keydown={() => dispatch("closeTutPopUp")}
+			on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && dispatch("closeTutPopUp")}
 		>
 			Swipe board or tap WORDLE+ to change game mode
 			<span class="ok">OK</span>
@@ -97,13 +108,24 @@
 		z-index: 1;
 		display: flex;
 	}
-	h1 {
+	.title-button {
+		background: none;
+		border: none;
+		padding: 0;
 		position: absolute;
 		width: max-content;
 		left: 50%;
 		transform: translateX(-50%);
-		font-size: var(--fs-large);
 		cursor: pointer;
+		color: inherit;
+		font-family: inherit;
+	}
+	h1 {
+		font-size: var(--fs-large);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.2rem;
 		text-align: center;
+		margin: 0;
 	}
 </style>

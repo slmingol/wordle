@@ -35,6 +35,8 @@
 
 <div
 	class="board-row"
+	role="group"
+	aria-label="Word guess row {num + 1}"
 	on:contextmenu|preventDefault={(e) => dispatch("ctx", { x: e.clientX, y: e.clientY })}
 	on:dblclick|preventDefault={(e) => dispatch("ctx", { x: e.clientX, y: e.clientY })}
 	on:touchstart={onTouch}

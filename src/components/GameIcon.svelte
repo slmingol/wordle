@@ -5,8 +5,10 @@
 <svg
 	xmlns="http://www.w3.org/2000/svg"
 	viewBox="0 0 24 24"
+	role="button"
+	tabindex="0"
 	on:click={onClick}
-	on:keypress={onClick}
+	on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
 >
 	<slot />
 </svg>
