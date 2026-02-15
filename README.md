@@ -42,6 +42,7 @@ Comprehensive documentation for developers and contributors:
 - **[Deployment Guide](DEPLOYMENT.md)** - Deployment options, configuration, and CI/CD
 - **[Browser Compatibility](BROWSER_COMPATIBILITY.md)** - Supported browsers, polyfills, and feature detection
 - **[Error Handling](ERROR_HANDLING_TEST.md)** - Error handling system and testing strategies
+- **[Monitoring & Analytics](MONITORING.md)** - Performance monitoring, analytics, and error tracking
 
 # Technical details
 This is written with Svelte in Typescript. This is my first Svelte project, and is intended as an exercise to help me learn and become proficient in Svelte. It also uses some basic scss for styling.
