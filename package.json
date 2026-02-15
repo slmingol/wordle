@@ -1,9 +1,9 @@
 {
-  "name": "wordle+",
+  "name": "wordle-plus",
   "description": "A remake of the popular game Wordle with additional modes and features.",
   "version": "1.5.2",
   "type": "module",
-  "private": "true",
+  "private": true,
   "license": "GPL-3.0",
   "scripts": {
     "dev": "vite --host",
