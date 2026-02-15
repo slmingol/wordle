@@ -27,7 +27,8 @@ class Writable<T> {
 	public set(new_value: T, always_update: boolean = false) {
 		if (always_update || Writable.safe_not_equal(this.value, new_value)) {
 			this.value = new_value;
-			if (stop) { // store is ready
+			if (stop) {
+				// store is ready
 				const run_queue = !Writable.subscriber_queue.length;
 				for (const subscriber of this.subscribers) {
 					subscriber[1]();
@@ -75,7 +76,7 @@ class Writable<T> {
 	 * unintuitive comparison nonsense.
 	 */
 	private static safe_not_equal(a: any, b: any) {
-		return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
+		return a != a ? b == b : a !== b || (a && typeof a === "object") || typeof a === "function";
 	}
 	/** Dummy function to be used as a default value. */
 	private static noop() {

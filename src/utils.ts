@@ -36,7 +36,7 @@ class WordData {
 		}
 	}
 	confirmCount(char: string) {
-		let c = this.letterCounts.get(char);
+		const c = this.letterCounts.get(char);
 		if (!c) {
 			this.not(char);
 		} else {
@@ -48,7 +48,7 @@ class WordData {
 		return val ? val[1] : false;
 	}
 	setCount(char: string, count: number) {
-		let c = this.letterCounts.get(char);
+		const c = this.letterCounts.get(char);
 		if (!c) {
 			this.letterCounts.set(char, [count, false]);
 		} else {
@@ -93,8 +93,8 @@ export function getRowData(n: number, board: GameBoard) {
 			}
 			if (state === "🟩") {
 				wd.word[col].value = char;
-			}
-			else {	// if (state === "🟨")
+			} else {
+				// if (state === "🟨")
 				wd.word[col].not(char);
 			}
 		}
@@ -118,15 +118,19 @@ export function getRowData(n: number, board: GameBoard) {
 }
 
 function countOccurrences<T>(arr: T[], val: T) {
-	return arr.reduce((count, v) => v === val ? count + 1 : count, 0);
+	return arr.reduce((count, v) => (v === val ? count + 1 : count), 0);
 }
 
 export function contractNum(n: number) {
 	switch (n % 10) {
-		case 1: return `${n}st`;
-		case 2: return `${n}nd`;
-		case 3: return `${n}rd`;
-		default: return `${n}th`;
+		case 1:
+			return `${n}st`;
+		case 2:
+			return `${n}nd`;
+		case 3:
+			return `${n}rd`;
+		default:
+			return `${n}th`;
 	}
 }
 
@@ -143,7 +147,11 @@ export function newSeed(mode: GameMode, time?: number) {
 		case GameMode.daily:
 			// Adds time zone offset to UTC time, calculates how many days that falls after 1/1/1970
 			// and returns the unix time for the beginning of that day.
-			return Date.UTC(1970, 0, 1 + Math.floor((now - (new Date().getTimezoneOffset() * ms.MINUTE)) / ms.DAY));
+			return Date.UTC(
+				1970,
+				0,
+				1 + Math.floor((now - new Date().getTimezoneOffset() * ms.MINUTE) / ms.DAY)
+			);
 		case GameMode.hourly:
 			return now - (now % ms.HOUR);
 		// case GameMode.minutely:
@@ -159,7 +167,7 @@ export const modeData: ModeData = {
 		{
 			name: "Daily",
 			unit: ms.DAY,
-			start: 1642370400000,	// 17/01/2022 UTC+2
+			start: 1642370400000, // 17/01/2022 UTC+2
 			seed: newSeed(GameMode.daily),
 			historical: false,
 			streak: true,
@@ -168,7 +176,7 @@ export const modeData: ModeData = {
 		{
 			name: "Hourly",
 			unit: ms.HOUR,
-			start: 1642528800000,	// 18/01/2022 8:00pm UTC+2
+			start: 1642528800000, // 18/01/2022 8:00pm UTC+2
 			seed: newSeed(GameMode.hourly),
 			historical: false,
 			icon: "m50,7h100v33c0,40 -35,40 -35,60c0,20 35,20 35,60v33h-100v-33c0,-40 35,-40 35,-60c0,-20 -35,-20 -35,-60z",
@@ -177,7 +185,7 @@ export const modeData: ModeData = {
 		{
 			name: "Infinite",
 			unit: ms.SECOND,
-			start: 1642428600000,	// 17/01/2022 4:10:00pm UTC+2
+			start: 1642428600000, // 17/01/2022 4:10:00pm UTC+2
 			seed: newSeed(GameMode.infinite),
 			historical: false,
 			icon: "m7,100c0,-50 68,-50 93,0c25,50 93,50 93,0c0,-50 -68,-50 -93,0c-25,50 -93,50 -93,0z",
@@ -191,7 +199,7 @@ export const modeData: ModeData = {
 		// 	icon: "m7,200v-200l93,100l93,-100v200",
 		// 	streak: true,
 		// },
-	]
+	],
 };
 /**
  * Return the word number for the given mode at the time that that mode's seed was set.
@@ -211,17 +219,12 @@ export function seededRandomInt(min: number, max: number, seed: number) {
 
 export const DELAY_INCREMENT = 200;
 
-export const PRAISE = [
-	"Genius",
-	"Magnificent",
-	"Impressive",
-	"Splendid",
-	"Great",
-	"Phew",
-];
+export const PRAISE = ["Genius", "Magnificent", "Impressive", "Splendid", "Great", "Phew"];
 
 abstract class Storable {
-	toString() { return JSON.stringify(this); }
+	toString() {
+		return JSON.stringify(this);
+	}
 }
 
 export class GameState extends Storable {
@@ -249,7 +252,7 @@ export class GameState extends Storable {
 			this.wordNumber = getWordNumber(mode);
 			this.board = {
 				words: Array(ROWS).fill(""),
-				state: Array.from({ length: ROWS }, () => (Array(COLS).fill("🔳"))),
+				state: Array.from({ length: ROWS }, () => Array(COLS).fill("🔳")),
 			};
 
 			this.#valid = true;
@@ -265,17 +268,23 @@ export class GameState extends Storable {
 		return this.board.words[this.guesses - 1];
 	}
 	/**
-	* Returns an object containing the position of the character in the latest word that violates
-	* hard mode, and what type of violation it is, if there is a violation.
-	*/
+	 * Returns an object containing the position of the character in the latest word that violates
+	 * hard mode, and what type of violation it is, if there is a violation.
+	 */
 	checkHardMode(): HardModeData {
 		for (let i = 0; i < COLS; ++i) {
-			if (this.board.state[this.guesses - 1][i] === "🟩" && this.board.words[this.guesses - 1][i] !== this.board.words[this.guesses][i]) {
+			if (
+				this.board.state[this.guesses - 1][i] === "🟩" &&
+				this.board.words[this.guesses - 1][i] !== this.board.words[this.guesses][i]
+			) {
 				return { pos: i, char: this.board.words[this.guesses - 1][i], type: "🟩" };
 			}
 		}
 		for (let i = 0; i < COLS; ++i) {
-			if (this.board.state[this.guesses - 1][i] === "🟨" && !this.board.words[this.guesses].includes(this.board.words[this.guesses - 1][i])) {
+			if (
+				this.board.state[this.guesses - 1][i] === "🟨" &&
+				!this.board.words[this.guesses].includes(this.board.words[this.guesses - 1][i])
+			) {
 				return { pos: i, char: this.board.words[this.guesses - 1][i], type: "🟨" };
 			}
 		}
@@ -393,7 +402,9 @@ export class Stats extends Storable {
 		if (this.#hasStreak) this.streak = 0;
 		this.lastGame = mode.seed;
 	}
-	get hasStreak() { return this.#hasStreak; }
+	get hasStreak() {
+		return this.#hasStreak;
+	}
 }
 
 export class LetterStates {
@@ -434,7 +445,7 @@ export class LetterStates {
 				}
 			}
 		}
-	};
+	}
 	/**
 	 * IMPORTANT: When this method is called svelte will not register the update, so you need to set
 	 * the variable that this object is assigned to equal to itself to force an update.
@@ -447,7 +458,6 @@ export class LetterStates {
 				this[word[i]] = e;
 			}
 		});
-
 	}
 }
 
@@ -459,5 +469,8 @@ export function timeRemaining(m: Mode) {
 }
 
 export function failed(s: GameState) {
-	return !(s.active || (s.guesses > 0 && s.board.state[s.guesses - 1].join("") === "🟩".repeat(COLS)));
+	return !(
+		s.active ||
+		(s.guesses > 0 && s.board.state[s.guesses - 1].join("") === "🟩".repeat(COLS))
+	);
 }

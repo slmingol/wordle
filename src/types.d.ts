@@ -18,8 +18,8 @@ type RowData = {
 type LetterState = "🔳" | "⬛" | "🟨" | "🟩";
 
 type GameBoard = {
-	words: string[],
-	state: LetterState[][],
+	words: string[];
+	state: LetterState[][];
 };
 
 type SettingType = "switch" | "dropdown" | "custom";
@@ -56,33 +56,33 @@ type Guesses = {
 	"4": number;
 	"5": number;
 	"6": number;
-	"fail": number;
+	fail: number;
 };
 
 type ModeData = {
-	default: GameMode,
-	modes: Mode[],
+	default: GameMode;
+	modes: Mode[];
 };
 
 type Mode = {
-	name: string,
-	unit: number,
-	start: number,
-	seed: number,
-	historical: boolean,
-	icon?: string,
-	streak?: boolean,
-	useTimeZone?: boolean,
+	name: string;
+	unit: number;
+	start: number;
+	seed: number;
+	historical: boolean;
+	icon?: string;
+	streak?: boolean;
+	useTimeZone?: boolean;
 };
 
 type HardModeData = {
-	pos: number,
-	char: string,
-	type: "🟩" | "🟨" | "⬛",
+	pos: number;
+	char: string;
+	type: "🟩" | "🟨" | "⬛";
 };
 
 type Subscriber<T> = [(val: T) => void, (val?: T) => void];
 
 type Direction = "top" | "right" | "bottom" | "left";
 
-type Swipe = CustomEvent<{ direction: Direction; }>;
+type Swipe = CustomEvent<{ direction: Direction }>;

@@ -1,31 +1,31 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	
+	import { safeGetJSON, safeSetJSON, safeRemoveItem } from "../../localStorage";
+
 	let visible = false;
 	let analyticsConsent = false;
 
 	const CONSENT_KEY = "analytics-consent";
 	const CONSENT_VERSION = "1.0";
 
+	interface ConsentData {
+		accepted: boolean;
+		version: string;
+		timestamp: number;
+	}
+
 	onMount(() => {
-		const stored = localStorage.getItem(CONSENT_KEY);
-		if (!stored) {
+		const consent = safeGetJSON<ConsentData | null>(CONSENT_KEY, null);
+		if (!consent) {
 			visible = true;
-		} else {
-			try {
-				const consent = JSON.parse(stored);
-				if (consent.version === CONSENT_VERSION) {
-					analyticsConsent = consent.accepted;
-					if (analyticsConsent) {
-						loadAnalytics();
-					}
-				} else {
-					// Version mismatch, ask for consent again
-					visible = true;
-				}
-			} catch {
-				visible = true;
+		} else if (consent.version === CONSENT_VERSION) {
+			analyticsConsent = consent.accepted;
+			if (analyticsConsent) {
+				loadAnalytics();
 			}
+		} else {
+			// Version mismatch, ask for consent again
+			visible = true;
 		}
 	});
 
@@ -43,35 +43,31 @@
 	}
 
 	function saveConsent(accepted: boolean) {
-		try {
-			localStorage.setItem(CONSENT_KEY, JSON.stringify({
-				accepted,
-				version: CONSENT_VERSION,
-				timestamp: Date.now()
-			}));
-		} catch (e) {
-			console.warn("Could not save consent preference:", e);
-		}
+		safeSetJSON(CONSENT_KEY, {
+			accepted,
+			version: CONSENT_VERSION,
+			timestamp: Date.now(),
+		});
 	}
 
 	function loadAnalytics() {
 		if (document.location.origin === "https://mikhad.github.io") {
 			// Initialize Google Analytics
 			window.dataLayer = window.dataLayer || [];
-			function gtag(...args: any[]) { 
-				window.dataLayer.push(arguments); 
+			function gtag(...args: any[]) {
+				window.dataLayer.push(arguments);
 			}
 			(window as any).gtag = gtag;
-			gtag('js', new Date());
-			gtag('config', 'G-RHN319RJ6V', {
-				'anonymize_ip': true,
-				'cookie_flags': 'SameSite=None;Secure'
+			gtag("js", new Date());
+			gtag("config", "G-RHN319RJ6V", {
+				anonymize_ip: true,
+				cookie_flags: "SameSite=None;Secure",
 			});
 
 			// Load GA script
-			const script = document.createElement('script');
+			const script = document.createElement("script");
 			script.async = true;
-			script.src = 'https://www.googletagmanager.com/gtag/js?id=G-RHN319RJ6V';
+			script.src = "https://www.googletagmanager.com/gtag/js?id=G-RHN319RJ6V";
 			document.head.appendChild(script);
 		}
 	}
@@ -79,7 +75,7 @@
 	export function revokeConsent() {
 		analyticsConsent = false;
 		saveConsent(false);
-		localStorage.removeItem(CONSENT_KEY);
+		safeRemoveItem(CONSENT_KEY);
 		// Reload page to clear analytics
 		window.location.reload();
 	}
@@ -91,8 +87,8 @@
 			<div class="consent-content">
 				<h3>Privacy & Cookies</h3>
 				<p>
-					We use Google Analytics to understand how visitors use this site. 
-					This helps us improve the game. Your IP address will be anonymized.
+					We use Google Analytics to understand how visitors use this site. This helps us improve
+					the game. Your IP address will be anonymized.
 				</p>
 				<p class="consent-details">
 					You can change your preference at any time in the settings menu.
@@ -102,12 +98,8 @@
 				</p>
 			</div>
 			<div class="consent-actions">
-				<button class="consent-decline" on:click={decline}>
-					Decline
-				</button>
-				<button class="consent-accept" on:click={accept}>
-					Accept
-				</button>
+				<button class="consent-decline" on:click={decline}> Decline </button>
+				<button class="consent-accept" on:click={accept}> Accept </button>
 			</div>
 		</div>
 	</div>
@@ -163,11 +155,11 @@
 
 		.consent-details {
 			font-size: var(--fs-tiny);
-			
+
 			a {
 				color: var(--color-present);
 				text-decoration: underline;
-				
+
 				&:hover {
 					opacity: 0.8;
 				}

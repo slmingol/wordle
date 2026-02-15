@@ -36,7 +36,7 @@
 		tabindex="0"
 		aria-label="Previous tip"
 		on:click={previousTip}
-		on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && previousTip()}
+		on:keydown={(e) => (e.key === "Enter" || e.key === " ") && previousTip()}
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 100 100"
 	>
@@ -47,7 +47,7 @@
 		tabindex="0"
 		aria-label="Next tip"
 		on:click={nextTip}
-		on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && nextTip()}
+		on:keydown={(e) => (e.key === "Enter" || e.key === " ") && nextTip()}
 		class="right"
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 100 100"

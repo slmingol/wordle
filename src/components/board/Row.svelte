@@ -15,7 +15,7 @@
 	}
 	const dispatch = createEventDispatcher();
 	let animation = "";
-	let tiles: Tile[] = [];
+	const tiles: Tile[] = [];
 
 	const MAX_DOUBLE_CLICK_INTERVAL = 400;
 	let lastTouch = 0;

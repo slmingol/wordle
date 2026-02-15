@@ -45,7 +45,7 @@
 			toaster.pop(modeData.modes[$mode].name);
 		}}
 		on:keydown|self={(e) => {
-			if (e.key === 'Enter' || e.key === ' ') {
+			if (e.key === "Enter" || e.key === " ") {
 				$mode = ($mode + 1) % modeData.modes.length;
 				toaster.pop(modeData.modes[$mode].name);
 			}
@@ -80,7 +80,7 @@
 			aria-label="Dismiss tutorial"
 			class="tutorial"
 			on:click={() => dispatch("closeTutPopUp")}
-			on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && dispatch("closeTutPopUp")}
+			on:keydown={(e) => (e.key === "Enter" || e.key === " ") && dispatch("closeTutPopUp")}
 		>
 			Swipe board or tap WORDLE+ to change game mode
 			<span class="ok">OK</span>

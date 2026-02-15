@@ -14,14 +14,14 @@
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape' && visible) {
+		if (e.key === "Escape" && visible) {
 			close();
 		}
 	}
 
 	onMount(() => {
-		window.addEventListener('keydown', handleKeydown);
-		return () => window.removeEventListener('keydown', handleKeydown);
+		window.addEventListener("keydown", handleKeydown);
+		return () => window.removeEventListener("keydown", handleKeydown);
 	});
 </script>
 
@@ -35,7 +35,14 @@
 	on:click|self={close}
 >
 	<div class="modal">
-		<div class="exit" role="button" tabindex="0" aria-label="Close" on:click={close} on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && close()}>
+		<div
+			class="exit"
+			role="button"
+			tabindex="0"
+			aria-label="Close"
+			on:click={close}
+			on:keydown={(e) => (e.key === "Enter" || e.key === " ") && close()}
+		>
 			<GameIcon>
 				<path
 					d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"

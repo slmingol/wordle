@@ -8,7 +8,7 @@
 	role="button"
 	tabindex="0"
 	on:click={onClick}
-	on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
+	on:keydown={(e) => (e.key === "Enter" || e.key === " ") && onClick()}
 >
 	<slot />
 </svg>

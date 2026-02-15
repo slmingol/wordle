@@ -9,8 +9,7 @@
 <div>Guess the <strong>WORDLE</strong> in {ROWS} tries.</div>
 <div>Each guess must be a valid {COLS} letter word. Hit the enter button to submit.</div>
 <div>
-	After each guess, the color of the tiles will change to show how close your guess was to the
-	word.
+	After each guess, the color of the tiles will change to show how close your guess was to the word.
 </div>
 <div class:complete={visible} class="examples">
 	<div><strong>Examples</strong></div>
@@ -45,8 +44,8 @@
 		target="_blank"
 		rel="noreferrer">Wordle</a
 	>
-	by Josh Wardle with additional modes and features, allowing you to play infinite wordles. Switch
-	to infinite mode to play an unlimited number of times.
+	by Josh Wardle with additional modes and features, allowing you to play infinite wordles. Switch to
+	infinite mode to play an unlimited number of times.
 	<br /><br />
 	Open the settings menu to see some of the additional features.
 	<br />

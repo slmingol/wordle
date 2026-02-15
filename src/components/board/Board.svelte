@@ -22,7 +22,7 @@
 	}
 	const dispatch = createEventDispatcher();
 
-	let rows: Row[] = [];
+	const rows: Row[] = [];
 	let showCtx = false;
 	let pAns = 0;
 	let pSols = 0;
@@ -58,9 +58,9 @@
 	}
 
 	function swipeEnd(e: TouchEvent) {
-		let deltaX = e.changedTouches[0].clientX - startX;
-		let deltaY = e.changedTouches[0].clientY - startY;
-		let elapsed = Date.now() - startTime;
+		const deltaX = e.changedTouches[0].clientX - startX;
+		const deltaY = e.changedTouches[0].clientY - startY;
+		const elapsed = Date.now() - startTime;
 		if (elapsed > maxSwipePeriod) return;
 		if (Math.abs(deltaX) >= swipeThreshold && Math.abs(deltaY) < swipeTolerance) {
 			dispatch("swipe", { direction: deltaX < 0 ? "left" : "right" });
@@ -96,7 +96,7 @@
 			aria-label="Dismiss tutorial"
 			class="tutorial"
 			on:click={() => dispatch("closeTutPopUp")}
-			on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && dispatch("closeTutPopUp")}
+			on:keydown={(e) => (e.key === "Enter" || e.key === " ") && dispatch("closeTutPopUp")}
 		>
 			double tap a row to see a word's definition, or how many words can be played there
 			<span class="ok">OK</span>

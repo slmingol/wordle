@@ -5,6 +5,7 @@
 	import { modeData, GameState } from "../../utils";
 	import type { Toaster } from "../widgets";
 	import Setting from "./Setting.svelte";
+	import { safeSetItem, safeRemoveItem } from "../../localStorage";
 
 	export let state: GameState;
 
@@ -18,10 +19,8 @@
 	$: {
 		if (root) {
 			$settings.dark ? root.classList.remove("light") : root.classList.add("light");
-			$settings.colorblind
-				? root.classList.add("colorblind")
-				: root.classList.remove("colorblind");
-			localStorage.setItem("settings", $settings.toString());
+			$settings.colorblind ? root.classList.add("colorblind") : root.classList.remove("colorblind");
+			safeSetItem("settings", $settings.toString());
 		}
 	}
 </script>
@@ -40,7 +39,7 @@
 				}
 			}}
 			on:keydown={(e) => {
-				if ((e.key === 'Enter' || e.key === ' ') && !state.validHard) {
+				if ((e.key === "Enter" || e.key === " ") && !state.validHard) {
 					toaster.pop("Game has already violated hard mode");
 				}
 			}}
@@ -80,7 +79,7 @@
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 24 24"
 					on:click={() => dispatch("historical")}
-					on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && dispatch("historical")}
+					on:keydown={(e) => (e.key === "Enter" || e.key === " ") && dispatch("historical")}
 				>
 					<path
 						d="M19.391 12c0-4.082-3.309-7.391-7.391-7.391a7.39 7.39 0 0 0-6.523 3.912l1.653 1.567H2v-5.13l1.572 1.659A9.99 9.99 0 0 1 12 2a10 10 0 1 1 0 20c-4.589 0-8.453-3.09-9.631-7.301l2.512-.703c.871 3.113 3.73 5.395 7.119 5.395 4.082 0 7.391-3.309 7.391-7.391zM12 7.5a1 1 0 0 1 1 1v3.062l3.288 3.031a1 1 0 0 1-1.356 1.471L11 12.438V8.5a1 1 0 0 1 1-1z"
@@ -95,8 +94,8 @@
 				<button
 					class="privacy-button"
 					on:click={() => {
-						localStorage.removeItem('analytics-consent');
-						toaster.pop('Consent reset. Reload to see banner.');
+						safeRemoveItem("analytics-consent");
+						toaster.pop("Consent reset. Reload to see banner.");
 					}}
 				>
 					Reset Consent
@@ -104,9 +103,7 @@
 			</svelte:fragment>
 		</Setting>
 		<div class="links">
-			<a href="https://github.com/MikhaD/wordle" target="_blank" rel="noreferrer">
-				Leave a ⭐
-			</a>
+			<a href="https://github.com/MikhaD/wordle" target="_blank" rel="noreferrer"> Leave a ⭐ </a>
 			<a href="https://github.com/MikhaD/wordle/issues" target="_blank" rel="noreferrer">
 				Report a Bug
 			</a>

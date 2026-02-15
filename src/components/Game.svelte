@@ -34,6 +34,7 @@
 		Stats,
 	} from "../utils";
 	import { letterStates, settings, mode } from "../stores";
+	import { safeGetItem, safeSetItem, safeClear } from "../localStorage";
 
 	export let word: string;
 	export let stats: Stats;
@@ -64,9 +65,7 @@
 				const hm = game.checkHardMode();
 				if ($settings.hard[$mode]) {
 					if (hm.type === "🟩") {
-						toaster.pop(
-							`${contractNum(hm.pos + 1)} letter must be ${hm.char.toUpperCase()}`
-						);
+						toaster.pop(`${contractNum(hm.pos + 1)} letter must be ${hm.char.toUpperCase()}`);
 						board.shake(game.guesses);
 						return;
 					} else if (hm.type === "🟨") {
@@ -101,7 +100,7 @@
 		if (!modeData.modes[$mode].historical) {
 			stats.addWin(game.guesses, modeData.modes[$mode]);
 			stats = stats;
-			localStorage.setItem(`stats-${$mode}`, stats.toString());
+			safeSetItem(`stats-${$mode}`, stats.toString());
 		}
 	}
 
@@ -111,7 +110,7 @@
 		if (!modeData.modes[$mode].historical) {
 			stats.addLoss(modeData.modes[$mode]);
 			stats = stats;
-			localStorage.setItem(`stats-${$mode}`, stats.toString());
+			safeSetItem(`stats-${$mode}`, stats.toString());
 		}
 	}
 
@@ -124,7 +123,7 @@
 	function reload() {
 		modeData.modes[$mode].historical = false;
 		modeData.modes[$mode].seed = newSeed($mode);
-		game = new GameState($mode, localStorage.getItem(`state-${$mode}`));
+		game = new GameState($mode, safeGetItem(`state-${$mode}`));
 		word = words.words[seededRandomInt(0, words.words.length, modeData.modes[$mode].seed)];
 		$letterStates = new LetterStates();
 		showStats = false;
@@ -210,12 +209,7 @@
 		<Distribution distribution={stats.guesses} {game} />
 	{/if}
 	<Separator visible={!game.active}>
-		<Timer
-			slot="1"
-			bind:this={timer}
-			on:timeup={() => (showRefresh = true)}
-			on:reload={reload}
-		/>
+		<Timer slot="1" bind:this={timer} on:timeup={() => (showRefresh = true)} on:reload={reload} />
 		<Share slot="2" state={game} />
 	</Separator>
 	<ShareGame wordNumber={game.wordNumber} />
@@ -230,7 +224,7 @@
 			aria-label="Give up on current game"
 			class="button concede"
 			on:click={concede}
-			on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && concede()}
+			on:keydown={(e) => (e.key === "Enter" || e.key === " ") && concede()}
 		>
 			give up
 		</div>
@@ -240,7 +234,16 @@
 <Modal fullscreen={true} bind:visible={showSettings}>
 	<Settings state={game} on:historical={() => (showHistorical = true)} />
 	{#if game.active}
-		<div class="button concede" role="button" tabindex="0" aria-label="Give up on current game" on:click={concede} on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && concede()}>give up</div>
+		<div
+			class="button concede"
+			role="button"
+			tabindex="0"
+			aria-label="Give up on current game"
+			on:click={concede}
+			on:keydown={(e) => (e.key === "Enter" || e.key === " ") && concede()}
+		>
+			give up
+		</div>
 	{/if}
 	<Tips change={showSettings} />
 
@@ -257,8 +260,11 @@
 				aria-label="Double click to reset statistics"
 				class="word"
 				on:dblclick={() => {
-					localStorage.clear();
-					toaster.pop("localStorage cleared");
+					if (safeClear()) {
+						toaster.pop("localStorage cleared");
+					} else {
+						toaster.pop("Failed to clear localStorage");
+					}
 				}}
 			>
 				{modeData.modes[$mode].name} word #{game.wordNumber}

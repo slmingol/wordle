@@ -1,11 +1,11 @@
 <script context="module" lang="ts">
 	const cache = new Map<string, Promise<DictionaryEntry>>();
-	
+
 	// Rate limiting: track request timestamps
 	const requestTimes: number[] = [];
 	const MAX_REQUESTS_PER_MINUTE = 10;
 	const REQUEST_TIMEOUT = 8000; // 8 seconds
-	
+
 	function canMakeRequest(): boolean {
 		const now = Date.now();
 		// Remove timestamps older than 1 minute
@@ -14,7 +14,7 @@
 		}
 		return requestTimes.length < MAX_REQUESTS_PER_MINUTE;
 	}
-	
+
 	function recordRequest() {
 		requestTimes.push(Date.now());
 	}
@@ -29,7 +29,7 @@
 		if (!cache.has(word)) {
 			// Rate limiting check
 			if (!canMakeRequest()) {
-				throw new Error('Rate limit exceeded. Please wait a moment.');
+				throw new Error("Rate limit exceeded. Please wait a moment.");
 			}
 
 			recordRequest();
@@ -39,29 +39,26 @@
 			const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
 			try {
-				const data = await fetch(
-					`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`, 
-					{
-						mode: "cors",
-						signal: controller.signal,
-					}
-				);
-				
+				const data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`, {
+					mode: "cors",
+					signal: controller.signal,
+				});
+
 				clearTimeout(timeoutId);
 
 				if (data.ok) {
 					cache.set(word, (await data.json())[0]);
 				} else if (data.status === 429) {
-					throw new Error('Too many requests. Please try again later.');
+					throw new Error("Too many requests. Please try again later.");
 				} else if (data.status === 404) {
-					throw new Error('Definition not found.');
+					throw new Error("Definition not found.");
 				} else {
 					throw new Error(`Failed to fetch definition (${data.status})`);
 				}
 			} catch (error) {
 				clearTimeout(timeoutId);
-				if (error.name === 'AbortError') {
-					throw new Error('Request timed out. Please try again.');
+				if (error.name === "AbortError") {
+					throw new Error("Request timed out. Please try again.");
 				}
 				throw error;
 			}
@@ -87,8 +84,8 @@
 	{:catch error}
 		<div class="error">
 			Your word was <strong>{word}</strong>.
-			<br>
-			<span class="error-message">{error?.message || 'Failed to fetch definition'}</span>
+			<br />
+			<span class="error-message">{error?.message || "Failed to fetch definition"}</span>
 		</div>
 	{/await}
 </div>

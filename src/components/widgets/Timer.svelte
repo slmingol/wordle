@@ -42,7 +42,7 @@
 			aria-label="Reload game"
 			class="button"
 			on:click={() => dispatch("reload")}
-			on:keydown={(e) => (e.key === 'Enter' || e.key === ' ') && dispatch("reload")}
+			on:keydown={(e) => (e.key === "Enter" || e.key === " ") && dispatch("reload")}
 		>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
 				<path

@@ -1,5 +1,5 @@
 const words = {
-	"words": [
+	words: [
 		"cigar",
 		"rebut",
 		"sissy",
@@ -2314,9 +2314,9 @@ const words = {
 		"rower",
 		"artsy",
 		"rural",
-		"shave"
+		"shave",
 	],
-	"valid": [
+	valid: [
 		"aahed",
 		"aalii",
 		"aargh",
@@ -12973,7 +12973,7 @@ const words = {
 		"zygal",
 		"zygon",
 		"zymes",
-		"zymic"
-	]
+		"zymic",
+	],
 };
 export default words;

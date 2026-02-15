@@ -47,30 +47,18 @@
 <div class:preventChange class="keyboard">
 	<div class="row">
 		{#each keys[0] as letter}
-			<Key
-				{letter}
-				on:keystroke={(e) => appendValue(e.detail)}
-				state={$letterStates[letter]}
-			/>
+			<Key {letter} on:keystroke={(e) => appendValue(e.detail)} state={$letterStates[letter]} />
 		{/each}
 	</div>
 	<div class="row">
 		{#each keys[1] as letter}
-			<Key
-				{letter}
-				on:keystroke={(e) => appendValue(e.detail)}
-				state={$letterStates[letter]}
-			/>
+			<Key {letter} on:keystroke={(e) => appendValue(e.detail)} state={$letterStates[letter]} />
 		{/each}
 	</div>
 	<div class="row">
 		<Key letter="ENTER" on:keystroke={() => !disabled && dispatch("submitWord")} />
 		{#each keys[2] as letter}
-			<Key
-				{letter}
-				on:keystroke={(e) => appendValue(e.detail)}
-				state={$letterStates[letter]}
-			/>
+			<Key {letter} on:keystroke={(e) => appendValue(e.detail)} state={$letterStates[letter]} />
 		{/each}
 		<Key letter="" on:keystroke={backspaceValue}>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
