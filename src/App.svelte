@@ -13,6 +13,8 @@
 	import { letterStates, settings, mode } from "./stores";
 	import { GameMode } from "./enums";
 	import { Toaster, CookieConsent } from "./components/widgets";
+	import ErrorBoundary from "./components/ErrorBoundary.svelte";
+	import ErrorNotifications from "./components/ErrorNotifications.svelte";
 	import { setContext } from "svelte";
 	import { safeGetItem, safeSetItem } from "./localStorage";
 
@@ -66,8 +68,11 @@
 	}
 </script>
 
+<ErrorNotifications />
 <CookieConsent />
 <Toaster bind:this={toaster} />
 {#if toaster}
-	<Game {stats} bind:word {toaster} bind:game={state} />
+	<ErrorBoundary>
+		<Game {stats} bind:word {toaster} bind:game={state} />
+	</ErrorBoundary>
 {/if}
