@@ -31,6 +31,18 @@ The game mode can be changed by clicking WORDLE+ at the top of the screen or swi
 
 **Infinite mode**: A new word every time you refresh, for the true addicts.
 
+# Documentation
+
+Comprehensive documentation for developers and contributors:
+
+- **[Contributing Guide](CONTRIBUTING.md)** - Development workflow, coding standards, and contribution guidelines
+- **[Architecture](ARCHITECTURE.md)** - System design, component hierarchy, and technical decisions
+- **[API Documentation](API.md)** - Detailed API reference for utility functions and modules
+- **[Testing Guide](TESTING.md)** - Testing infrastructure, patterns, and best practices
+- **[Deployment Guide](DEPLOYMENT.md)** - Deployment options, configuration, and CI/CD
+- **[Browser Compatibility](BROWSER_COMPATIBILITY.md)** - Supported browsers, polyfills, and feature detection
+- **[Error Handling](ERROR_HANDLING_TEST.md)** - Error handling system and testing strategies
+
 # Technical details
 This is written with Svelte in Typescript. This is my first Svelte project, and is intended as an exercise to help me learn and become proficient in Svelte. It also uses some basic scss for styling.
 
