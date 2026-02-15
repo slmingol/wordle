@@ -40,7 +40,7 @@ type Meaning = {
 type Definition = {
 	definition: string;
 	synonyms: string[];
-	antonyms: any[];
+	antonyms: string[];
 	example?: string;
 };
 

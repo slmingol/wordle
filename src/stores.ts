@@ -75,7 +75,7 @@ class Writable<T> {
 	 * check that two values are not equal to each other while avoiding some of JavaScript's
 	 * unintuitive comparison nonsense.
 	 */
-	private static safe_not_equal(a: any, b: any) {
+	private static safe_not_equal(a: unknown, b: unknown) {
 		return a != a ? b == b : a !== b || (a && typeof a === "object") || typeof a === "function";
 	}
 	/** Dummy function to be used as a default value. */

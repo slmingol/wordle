@@ -1,6 +1,15 @@
 import seedRandom from "seedrandom";
 import { GameMode, ms } from "./enums";
 import wordList from "./words_5";
+import {
+	parseJSON,
+	isValidGameState,
+	isValidSettings,
+	isValidStats,
+	type GameStateData,
+	type SettingsData,
+	type StatsData,
+} from "./validation";
 
 export const ROWS = 6;
 export const COLS = 5;
@@ -309,8 +318,19 @@ export class GameState extends Storable {
 		return result;
 	}
 	private parse(str: string) {
-		const parsed = JSON.parse(str) as GameState;
+		const defaultState: GameStateData = {
+			active: true,
+			guesses: 0,
+			validHard: true,
+			time: Date.now(),
+			wordNumber: getWordNumber(this.#mode),
+			board: { words: [], state: [] },
+		};
+
+		const parsed = parseJSON(str, isValidGameState, defaultState);
+
 		if (parsed.wordNumber !== getWordNumber(this.#mode)) return;
+
 		this.active = parsed.active;
 		this.guesses = parsed.guesses;
 		this.validHard = parsed.validHard;
@@ -328,10 +348,18 @@ export class Settings extends Storable {
 	public colorblind = false;
 	public tutorial: 0 | 1 | 2 | 3 = 3;
 
-	constructor(settings?: string) {
+	constructor(settings?: string | null) {
 		super();
 		if (settings) {
-			const parsed = JSON.parse(settings) as Settings;
+			const defaultSettings: SettingsData = {
+				hard: new Array(modeData.modes.length).fill(false),
+				dark: true,
+				colorblind: false,
+				tutorial: 3,
+			};
+
+			const parsed = parseJSON(settings, isValidSettings, defaultSettings);
+
 			this.hard = parsed.hard;
 			this.dark = parsed.dark;
 			this.colorblind = parsed.colorblind;
@@ -367,13 +395,20 @@ export class Stats extends Storable {
 		}
 	}
 	private parse(str: string) {
-		const parsed = JSON.parse(str) as Stats;
+		const defaultStats: StatsData = {
+			played: 0,
+			lastGame: 0,
+			guesses: { fail: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
+		};
+
+		const parsed = parseJSON(str, isValidStats, defaultStats);
+
 		this.played = parsed.played;
 		this.lastGame = parsed.lastGame;
 		this.guesses = parsed.guesses;
-		if (parsed.streak != undefined) {
+		if (parsed.streak !== undefined) {
 			this.streak = parsed.streak;
-			this.maxStreak = parsed.maxStreak;
+			this.maxStreak = parsed.maxStreak ?? 0;
 			this.#hasStreak = true;
 		}
 	}

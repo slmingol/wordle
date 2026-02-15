@@ -35,6 +35,7 @@
 	} from "../utils";
 	import { letterStates, settings, mode } from "../stores";
 	import { safeGetItem, safeSetItem, safeClear } from "../localStorage";
+	import { showErrorFeedback } from "../helpers";
 
 	export let word: string;
 	export let stats: Stats;
@@ -58,19 +59,26 @@
 
 	function submitWord() {
 		if (game.latestWord.length !== COLS) {
-			toaster.pop("Not enough letters");
-			board.shake(game.guesses);
+			showErrorFeedback(toaster, board, "Not enough letters", game.guesses);
 		} else if (words.contains(game.latestWord)) {
 			if (game.guesses > 0) {
 				const hm = game.checkHardMode();
 				if ($settings.hard[$mode]) {
 					if (hm.type === "🟩") {
-						toaster.pop(`${contractNum(hm.pos + 1)} letter must be ${hm.char.toUpperCase()}`);
-						board.shake(game.guesses);
+						showErrorFeedback(
+							toaster,
+							board,
+							`${contractNum(hm.pos + 1)} letter must be ${hm.char.toUpperCase()}`,
+							game.guesses
+						);
 						return;
 					} else if (hm.type === "🟨") {
-						toaster.pop(`Guess must contain ${hm.char.toUpperCase()}`);
-						board.shake(game.guesses);
+						showErrorFeedback(
+							toaster,
+							board,
+							`Guess must contain ${hm.char.toUpperCase()}`,
+							game.guesses
+						);
 						return;
 					}
 				} else if (hm.type !== "⬛") {
@@ -84,8 +92,7 @@
 			if (game.lastWord === word) win();
 			else if (game.guesses === ROWS) lose();
 		} else {
-			toaster.pop("Not in word list");
-			board.shake(game.guesses);
+			showErrorFeedback(toaster, board, "Not in word list", game.guesses);
 		}
 	}
 

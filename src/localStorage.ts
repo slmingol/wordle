@@ -2,6 +2,8 @@
  * Safe localStorage utilities with error handling
  */
 
+import { isString } from "./validation";
+
 /**
  * Safely get an item from localStorage
  * @param key - The key to retrieve
@@ -9,6 +11,10 @@
  * @returns The stored value or fallback/null
  */
 export function safeGetItem(key: string, fallback: string | null = null): string | null {
+	if (!isString(key) || key.trim() === "") {
+		console.warn("Invalid localStorage key provided");
+		return fallback;
+	}
 	try {
 		const value = localStorage.getItem(key);
 		return value !== null ? value : fallback;
@@ -25,6 +31,14 @@ export function safeGetItem(key: string, fallback: string | null = null): string
  * @returns True if successful, false otherwise
  */
 export function safeSetItem(key: string, value: string): boolean {
+	if (!isString(key) || key.trim() === "") {
+		console.warn("Invalid localStorage key provided");
+		return false;
+	}
+	if (!isString(value)) {
+		console.warn("Invalid localStorage value provided (must be string)");
+		return false;
+	}
 	try {
 		localStorage.setItem(key, value);
 		return true;
@@ -44,6 +58,10 @@ export function safeSetItem(key: string, value: string): boolean {
  * @returns True if successful, false otherwise
  */
 export function safeRemoveItem(key: string): boolean {
+	if (!isString(key) || key.trim() === "") {
+		console.warn("Invalid localStorage key provided");
+		return false;
+	}
 	try {
 		localStorage.removeItem(key);
 		return true;
@@ -74,6 +92,10 @@ export function safeClear(): boolean {
  * @returns Parsed JSON or fallback
  */
 export function safeGetJSON<T>(key: string, fallback: T): T {
+	if (!isString(key) || key.trim() === "") {
+		console.warn("Invalid localStorage key provided");
+		return fallback;
+	}
 	try {
 		const value = localStorage.getItem(key);
 		if (value === null) return fallback;
@@ -91,6 +113,10 @@ export function safeGetJSON<T>(key: string, fallback: T): T {
  * @returns True if successful, false otherwise
  */
 export function safeSetJSON(key: string, value: unknown): boolean {
+	if (!isString(key) || key.trim() === "") {
+		console.warn("Invalid localStorage key provided");
+		return false;
+	}
 	try {
 		localStorage.setItem(key, JSON.stringify(value));
 		return true;

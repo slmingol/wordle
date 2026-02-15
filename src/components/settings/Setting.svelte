@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Switch from "./Switch.svelte";
 	import DropDown from "./DropDown.svelte";
-	export let value: any;
+	export let value: string | number | boolean;
 	export let type: SettingType;
 	export let options: (string | number)[] = [];
 	export let disabled = false;

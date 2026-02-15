@@ -12,7 +12,7 @@
 
 <h3>guess distribution</h3>
 <div class="container">
-	{#each Object.entries(distribution) as guess, i (guess[0])}
+	{#each Object.entries(distribution) as guess, _i (guess[0])}
 		{@const g = Number(guess[0])}
 		{#if !isNaN(g)}
 			<div class="graph">

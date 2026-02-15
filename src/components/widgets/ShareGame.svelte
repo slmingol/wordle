@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { getContext } from "svelte";
-	import { GameMode } from "../../enums";
 	import { mode } from "../../stores";
 	import { modeData } from "../../utils";
 	import GameIcon from "../GameIcon.svelte";

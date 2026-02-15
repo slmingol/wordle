@@ -54,10 +54,10 @@
 		if (document.location.origin === "https://mikhad.github.io") {
 			// Initialize Google Analytics
 			window.dataLayer = window.dataLayer || [];
-			function gtag(...args: any[]) {
+			function gtag(..._args: IArguments[]) {
 				window.dataLayer.push(arguments);
 			}
-			(window as any).gtag = gtag;
+			(window as Window & { gtag: typeof gtag }).gtag = gtag;
 			gtag("js", new Date());
 			gtag("config", "G-RHN319RJ6V", {
 				anonymize_ip: true,
