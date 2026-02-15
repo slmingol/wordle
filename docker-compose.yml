@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Development environment
+  wordle-dev:
+    build:
+      context: .
+      target: development
+    container_name: wordle-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_ANALYTICS_ENABLED=false
+      - VITE_PERFORMANCE_MONITORING=false
+    profiles:
+      - dev
+
+  # Production environment
+  wordle-prod:
+    build:
+      context: .
+      target: production
+    container_name: wordle-prod
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    profiles:
+      - prod
+
+  # Production with custom environment variables
+  wordle-prod-configured:
+    build:
+      context: .
+      target: production
+      args:
+        - VITE_ANALYTICS_ENABLED=${VITE_ANALYTICS_ENABLED:-false}
+        - VITE_ANALYTICS_PROVIDER=${VITE_ANALYTICS_PROVIDER:-plausible}
+        - VITE_ANALYTICS_SITE_ID=${VITE_ANALYTICS_SITE_ID}
+        - VITE_PERFORMANCE_MONITORING=${VITE_PERFORMANCE_MONITORING:-false}
+        - VITE_ERROR_TRACKING_ENABLED=${VITE_ERROR_TRACKING_ENABLED:-false}
+    container_name: wordle-prod-configured
+    ports:
+      - "8080:80"
+    env_file:
+      - .env.production
+    profiles:
+      - prod-config

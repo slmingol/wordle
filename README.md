@@ -40,6 +40,7 @@ Comprehensive documentation for developers and contributors:
 - **[API Documentation](API.md)** - Detailed API reference for utility functions and modules
 - **[Testing Guide](TESTING.md)** - Testing infrastructure, patterns, and best practices
 - **[Deployment Guide](DEPLOYMENT.md)** - Deployment options, configuration, and CI/CD
+- **[Docker Guide](DOCKER.md)** - Docker and container deployment
 - **[Browser Compatibility](BROWSER_COMPATIBILITY.md)** - Supported browsers, polyfills, and feature detection
 - **[Error Handling](ERROR_HANDLING_TEST.md)** - Error handling system and testing strategies
 - **[Monitoring & Analytics](MONITORING.md)** - Performance monitoring, analytics, and error tracking
