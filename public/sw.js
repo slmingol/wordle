@@ -1,6 +1,7 @@
-//! IF ANYTHING IN THIS FILE IS CHANGED MAKE SURE setVersion.js HAS ALSO BEEN UPDATED
-// Increase the v number when the app is updated
-const version = "1.5.2";
+//! VERSION NUMBER IS INJECTED DURING BUILD - DO NOT MANUALLY EDIT
+//! Update version in package.json only
+// Version is replaced during build process from package.json
+const version = "1.5.2"; // This will be replaced by build script
 const cacheName = `wordle+-v${version}`;
 
 const assetsToCache = [

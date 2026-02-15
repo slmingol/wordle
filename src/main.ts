@@ -1,10 +1,11 @@
-//! IF ANYTHING IN THIS FILE IS CHANGED MAKE SURE setVersion.js HAS ALSO BEEN UPDATED
+//! IF ANYTHING IN THIS FILE IS CHANGED MAKE SURE THE BUILD PROCESS IS UPDATED
 import App from "./App.svelte";
+import { version } from "./version";
 
 const app = new App({
 	target: document.body,
 	props: {
-		version: "1.5.2",
+		version,
 	}
 });
 
