@@ -1,0 +1,19 @@
+# Browsers that we support
+# See https://github.com/browserslist/browserslist for more info
+
+# Production browsers
+[production]
+>0.2%
+not dead
+not op_mini all
+not ie 11
+not chrome < 90
+not firefox < 88
+not safari < 14
+not edge < 90
+
+# Development browsers  
+[development]
+last 1 chrome version
+last 1 firefox version
+last 1 safari version

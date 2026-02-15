@@ -19,7 +19,14 @@
 	<link rel="manifest" href="manifest.json">
 	<link rel="shortcut icon" href="img/logo_32x32.png" type="image/x-icon">
 	<link rel="apple-touch-icon" href="img/logo_192x192.png" />
+	
+	<!-- Preload critical resources -->
+	<link rel="preload" href="global.css" as="style">
 	<link rel="stylesheet" href="global.css">
+	
+	<!-- DNS prefetch for external resources -->
+	<link rel="dns-prefetch" href="https://api.dictionaryapi.dev">
+	<link rel="dns-prefetch" href="https://www.google-analytics.com">
 
 	<meta name="author" content="MikhaD">
 	<meta name="description"
