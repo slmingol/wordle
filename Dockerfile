@@ -2,7 +2,7 @@
 # Supports both development and production builds
 
 # Stage 1: Base
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 WORKDIR /app
 COPY package*.json ./
 
