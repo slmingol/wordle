@@ -14,6 +14,20 @@ This guide covers running Wordle+ in Docker containers for both development and 
 
 ## Quick Start
 
+### Using Pre-built Images (Recommended)
+
+Pre-built images are automatically published to GitHub Container Registry on every release.
+
+```bash
+# Pull and run the latest production image
+docker run -p 8080:80 ghcr.io/slmingol/wordle:latest
+
+# Or use docker-compose
+docker-compose --profile prod-prebuilt up
+
+# Access at http://localhost:8080
+```
+
 ### Development Mode
 
 ```bash
@@ -26,7 +40,7 @@ docker-compose --profile dev up --build
 # Access at http://localhost:5173
 ```
 
-### Production Mode
+### Production Mode (Build from Source)
 
 ```bash
 # Build and start production server
@@ -88,7 +102,22 @@ docker-compose --profile prod up -d
 docker-compose --profile prod down
 ```
 
-### Using Docker Directly
+### Using Pre-built Image
+
+```bash
+# Pull latest image
+docker pull ghcr.io/slmingol/wordle:latest
+
+# Run container
+docker run -p 8080:80 ghcr.io/slmingol/wordle:latest
+
+# Or specific version
+docker run -p 8080:80 ghcr.io/slmingol/wordle:2.0.1
+
+# Access at http://localhost:8080
+```
+
+### Using Docker Directly (Build from Source)
 
 ```bash
 # Build production image
@@ -163,7 +192,7 @@ docker build --target production \
 
 ## Docker Compose Profiles
 
-The `docker-compose.yml` includes three profiles:
+The `docker-compose.yml` includes four profiles:
 
 ### 1. Development Profile (`dev`)
 
@@ -176,9 +205,21 @@ The `docker-compose.yml` includes three profiles:
 docker-compose --profile dev up
 ```
 
-### 2. Production Profile (`prod`)
+### 2. Production Pre-built Profile (`prod-prebuilt`)
 
-- Optimized production build
+- Uses pre-built image from GitHub Container Registry
+- No build step required
+- Fastest deployment
+- Runs on port 8080
+- Automatically updated with each release
+
+```bash
+docker-compose --profile prod-prebuilt up
+```
+
+### 3. Production Build Profile (`prod`)
+
+- Optimized production build from source
 - Nginx web server
 - Runs on port 8080
 - Basic configuration
@@ -187,7 +228,7 @@ docker-compose --profile dev up
 docker-compose --profile prod up --build
 ```
 
-### 3. Production Configured Profile (`prod-config`)
+### 4. Production Configured Profile (`prod-config`)
 
 - Production build with custom environment
 - Loads from `.env.production`
@@ -196,6 +237,48 @@ docker-compose --profile prod up --build
 ```bash
 docker-compose --profile prod-config up --build
 ```
+
+## Container Registry
+
+Pre-built images are published to GitHub Container Registry (GHCR) on every push to main and on releases.
+
+### Available Tags
+
+```bash
+# Latest version (main branch)
+ghcr.io/slmingol/wordle:latest
+
+# Specific version
+ghcr.io/slmingol/wordle:2.0.1
+ghcr.io/slmingol/wordle:2.0
+
+# Branch-based
+ghcr.io/slmingol/wordle:main
+
+# Commit-based (for specific commits)
+ghcr.io/slmingol/wordle:main-<commit-sha>
+```
+
+### Pulling Images
+
+```bash
+# Pull latest
+docker pull ghcr.io/slmingol/wordle:latest
+
+# Pull specific version
+docker pull ghcr.io/slmingol/wordle:2.0.1
+
+# Run pulled image
+docker run -p 8080:80 ghcr.io/slmingol/wordle:latest
+```
+
+### Multi-Architecture Support
+
+Images are built for multiple architectures:
+- `linux/amd64` (x86_64)
+- `linux/arm64` (ARM64/Apple Silicon)
+
+Docker automatically pulls the correct architecture for your system.
 
 ## Customization
 

@@ -17,7 +17,18 @@ services:
     profiles:
       - dev
 
-  # Production environment
+  # Production environment (pre-built image from GHCR)
+  wordle-prod-prebuilt:
+    image: ghcr.io/slmingol/wordle:latest
+    container_name: wordle-prod-prebuilt
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    profiles:
+      - prod-prebuilt
+
+  # Production environment (build from source)
   wordle-prod:
     build:
       context: .
