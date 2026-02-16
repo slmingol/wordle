@@ -80,10 +80,10 @@ describe("validation utilities", () => {
 			expect(isObject(undefined)).toBe(false);
 		});
 
-		it("should return true for function objects if includeArrays is true", () => {
-			// Functions are objects in JavaScript
+		it("should return false for functions", () => {
+			// Functions are technically objects in JavaScript, but isObject is for plain objects
 			const func = () => {};
-			expect(isObject(func)).toBe(true);
+			expect(isObject(func)).toBe(false);
 		});
 	});
 
