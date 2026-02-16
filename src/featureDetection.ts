@@ -30,7 +30,7 @@ export function hasLocalStorage(): boolean {
 		window.localStorage.setItem(test, test);
 		window.localStorage.removeItem(test);
 		return true;
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 }
@@ -44,7 +44,7 @@ export function hasSessionStorage(): boolean {
 		window.sessionStorage.setItem(test, test);
 		window.sessionStorage.removeItem(test);
 		return true;
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 }
@@ -103,14 +103,14 @@ export function hasES6(): boolean {
 		// Check for ES6 features without using Function constructor (CSP-friendly)
 		// Check for: const/let, arrow functions, template literals, spread, destructuring
 		const testObj = { a: 1, b: 2 };
-		const { a, ...rest } = testObj;
+		const { a, ..._rest } = testObj;
 		const arr = [1, 2, 3];
-		const [first, ...remaining] = arr;
-		const arrowFn = () => true;
-		const template = `test ${a}`;
+		const [_first, ..._remaining] = arr;
+		const _arrowFn = () => true;
+		const _template = `test ${a}`;
 
 		return typeof Promise !== "undefined" && typeof Symbol !== "undefined";
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 }
@@ -125,7 +125,7 @@ export function hasCSSGrid(): boolean {
 			typeof CSS.supports === "function" &&
 			CSS.supports("display", "grid")
 		);
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 }
@@ -140,7 +140,7 @@ export function hasCSSFlexbox(): boolean {
 			typeof CSS.supports === "function" &&
 			CSS.supports("display", "flex")
 		);
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 }
@@ -155,7 +155,7 @@ export function hasCSSCustomProperties(): boolean {
 			typeof CSS.supports === "function" &&
 			CSS.supports("--test", "0")
 		);
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 }
@@ -171,7 +171,7 @@ export function hasCSSBackdrop(): boolean {
 			(CSS.supports("backdrop-filter", "blur(10px)") ||
 				CSS.supports("-webkit-backdrop-filter", "blur(10px)"))
 		);
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 }

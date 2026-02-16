@@ -7,7 +7,7 @@
 	export let showError: boolean = false;
 
 	let hasError = false;
-	let error: AppError | null = null;
+	const _error: AppError | null = null;
 	let errorMessage = "";
 
 	// Catch errors during component initialization

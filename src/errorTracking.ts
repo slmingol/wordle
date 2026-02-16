@@ -53,7 +53,7 @@ export function initializeErrorTracking(userConfig: Partial<ErrorTrackingConfig>
 
 	if (!config.enabled) {
 		if (import.meta.env.DEV) {
-			console.log("[Error Tracking] Disabled");
+			console.warn("[Error Tracking] Disabled");
 		}
 		return;
 	}
@@ -69,7 +69,7 @@ export function initializeErrorTracking(userConfig: Partial<ErrorTrackingConfig>
 	}
 
 	if (import.meta.env.DEV) {
-		console.log("[Error Tracking] Initialized with provider:", config.provider);
+		console.warn("[Error Tracking] Initialized with provider:", config.provider);
 	}
 }
 
@@ -104,7 +104,7 @@ function initializeSentry(): void {
 		});
 
 		if (import.meta.env.DEV) {
-			console.log("[Error Tracking] Sentry initialized");
+			console.warn("[Error Tracking] Sentry initialized");
 		}
 	} else {
 		console.warn("[Error Tracking] Sentry SDK not loaded");

@@ -76,7 +76,7 @@ function reportMetric(metric: PerformanceMetric): void {
 
 	// Log in development
 	if (import.meta.env.DEV) {
-		console.log(`[Performance] ${metric.name}:`, {
+		console.warn(`[Performance] ${metric.name}:`, {
 			value: Math.round(metric.value),
 			rating: metric.rating,
 		});
@@ -329,7 +329,7 @@ export function initializeMonitoring(
 
 	if (!enabled) {
 		if (import.meta.env.DEV) {
-			console.log("[Monitoring] Performance monitoring disabled");
+			console.warn("[Monitoring] Performance monitoring disabled");
 		}
 		return;
 	}
@@ -347,7 +347,7 @@ export function initializeMonitoring(
 	trackINP();
 
 	if (import.meta.env.DEV) {
-		console.log("[Monitoring] Performance monitoring initialized");
+		console.warn("[Monitoring] Performance monitoring initialized");
 	}
 }
 
