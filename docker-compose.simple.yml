@@ -6,7 +6,7 @@ services:
     image: ghcr.io/slmingol/wordle:latest
     container_name: wordle
     ports:
-      - "8080:80"
+      - "5173:80"
     restart: unless-stopped
     environment:
       - NODE_ENV=production

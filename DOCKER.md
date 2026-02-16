@@ -23,7 +23,7 @@ Pre-built images are automatically published to GitHub Container Registry on eve
 # Download docker-compose.simple.yml and run
 docker compose -f docker-compose.simple.yml up
 
-# Access at http://localhost:8080/wordle/
+# Access at http://localhost:5173/wordle/
 ```
 
 **Or using the main docker-compose.yml:**
