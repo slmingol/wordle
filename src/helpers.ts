@@ -86,6 +86,17 @@ export function formatTime(ms: number): string {
  * Deep clone an object using JSON (fast, but limited to JSON-serializable data)
  */
 export function deepClone<T>(obj: T): T {
+	// Handle primitives (including undefined, null)
+	if (obj === null || typeof obj !== "object") {
+		return obj;
+	}
+
+	// Handle Date objects
+	if (obj instanceof Date) {
+		return new Date(obj.getTime()) as T;
+	}
+
+	// Handle arrays and objects
 	return JSON.parse(JSON.stringify(obj));
 }
 
@@ -94,7 +105,13 @@ export function deepClone<T>(obj: T): T {
  */
 export function arraysEqual<T>(a: T[], b: T[]): boolean {
 	if (a.length !== b.length) return false;
-	return a.every((val, index) => val === b[index]);
+	return a.every((val, index) => {
+		// Deep comparison for nested arrays
+		if (Array.isArray(val) && Array.isArray(b[index])) {
+			return arraysEqual(val as any[], b[index] as any[]);
+		}
+		return val === b[index];
+	});
 }
 
 /**
