@@ -26,7 +26,8 @@ describe("localStorage utilities", () => {
 
 		it("should handle localStorage errors gracefully", () => {
 			const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-			vi.spyOn(Storage.prototype, "getItem").mockImplementationOnce(() => {
+			const originalGetItem = localStorage.getItem;
+			localStorage.getItem = vi.fn(() => {
 				throw new Error("Storage error");
 			});
 
@@ -34,6 +35,7 @@ describe("localStorage utilities", () => {
 			expect(result).toBeNull();
 			expect(consoleErrorSpy).toHaveBeenCalled();
 
+			localStorage.getItem = originalGetItem;
 			consoleErrorSpy.mockRestore();
 		});
 	});
@@ -46,16 +48,17 @@ describe("localStorage utilities", () => {
 
 		it("should handle localStorage errors gracefully", () => {
 			const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-			vi.spyOn(Storage.prototype, "setItem").mockImplementationOnce(() => {
+			const originalSetItem = localStorage.setItem;
+			localStorage.setItem = vi.fn(() => {
 				throw new Error("QuotaExceededError");
 			});
 
 			safeSetItem("test", "value");
 			expect(consoleErrorSpy).toHaveBeenCalled();
 
+			localStorage.setItem = originalSetItem;
 			consoleErrorSpy.mockRestore();
 		});
-
 		it("should store numbers as strings", () => {
 			safeSetItem("number", 42);
 			expect(localStorage.getItem("number")).toBe("42");
@@ -71,13 +74,15 @@ describe("localStorage utilities", () => {
 
 		it("should handle errors gracefully", () => {
 			const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-			vi.spyOn(Storage.prototype, "removeItem").mockImplementationOnce(() => {
+			const originalRemoveItem = localStorage.removeItem;
+			localStorage.removeItem = vi.fn(() => {
 				throw new Error("Storage error");
 			});
 
 			safeRemoveItem("test");
 			expect(consoleErrorSpy).toHaveBeenCalled();
 
+			localStorage.removeItem = originalRemoveItem;
 			consoleErrorSpy.mockRestore();
 		});
 	});
@@ -92,13 +97,15 @@ describe("localStorage utilities", () => {
 
 		it("should handle errors gracefully", () => {
 			const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-			vi.spyOn(Storage.prototype, "clear").mockImplementationOnce(() => {
+			const originalClear = localStorage.clear;
+			localStorage.clear = vi.fn(() => {
 				throw new Error("Storage error");
 			});
 
 			safeClear();
 			expect(consoleErrorSpy).toHaveBeenCalled();
 
+			localStorage.clear = originalClear;
 			consoleErrorSpy.mockRestore();
 		});
 	});
@@ -182,13 +189,15 @@ describe("localStorage utilities", () => {
 
 		it("should handle errors gracefully", () => {
 			const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-			vi.spyOn(Storage.prototype, "setItem").mockImplementationOnce(() => {
+			const originalSetItem = localStorage.setItem;
+			localStorage.setItem = vi.fn(() => {
 				throw new Error("Storage error");
 			});
 
 			safeSetJSON("test", { data: "value" });
 			expect(consoleErrorSpy).toHaveBeenCalled();
 
+			localStorage.setItem = originalSetItem;
 			consoleErrorSpy.mockRestore();
 		});
 	});

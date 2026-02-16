@@ -12,14 +12,14 @@ import { isString } from "./validation";
  */
 export function safeGetItem(key: string, fallback: string | null = null): string | null {
 	if (!isString(key) || key.trim() === "") {
-		console.warn("Invalid localStorage key provided");
+		console.error("Invalid localStorage key provided");
 		return fallback;
 	}
 	try {
 		const value = localStorage.getItem(key);
 		return value !== null ? value : fallback;
 	} catch (error) {
-		console.warn(`Failed to get localStorage item '${key}':`, error);
+		console.error(`Failed to get localStorage item '${key}':`, error);
 		return fallback;
 	}
 }
@@ -27,23 +27,19 @@ export function safeGetItem(key: string, fallback: string | null = null): string
 /**
  * Safely set an item in localStorage
  * @param key - The key to set
- * @param value - The value to store
+ * @param value - The value to store (will be converted to string)
  * @returns True if successful, false otherwise
  */
-export function safeSetItem(key: string, value: string): boolean {
+export function safeSetItem(key: string, value: string | number): boolean {
 	if (!isString(key) || key.trim() === "") {
-		console.warn("Invalid localStorage key provided");
-		return false;
-	}
-	if (!isString(value)) {
-		console.warn("Invalid localStorage value provided (must be string)");
+		console.error("Invalid localStorage key provided");
 		return false;
 	}
 	try {
-		localStorage.setItem(key, value);
+		localStorage.setItem(key, String(value));
 		return true;
 	} catch (error) {
-		console.warn(`Failed to set localStorage item '${key}':`, error);
+		console.error(`Failed to set localStorage item '${key}':`, error);
 		// Quota exceeded or other storage error
 		if (error instanceof DOMException && error.name === "QuotaExceededError") {
 			console.error("localStorage quota exceeded. Consider clearing old data.");
@@ -59,14 +55,14 @@ export function safeSetItem(key: string, value: string): boolean {
  */
 export function safeRemoveItem(key: string): boolean {
 	if (!isString(key) || key.trim() === "") {
-		console.warn("Invalid localStorage key provided");
+		console.error("Invalid localStorage key provided");
 		return false;
 	}
 	try {
 		localStorage.removeItem(key);
 		return true;
 	} catch (error) {
-		console.warn(`Failed to remove localStorage item '${key}':`, error);
+		console.error(`Failed to remove localStorage item '${key}':`, error);
 		return false;
 	}
 }
@@ -80,29 +76,41 @@ export function safeClear(): boolean {
 		localStorage.clear();
 		return true;
 	} catch (error) {
-		console.warn("Failed to clear localStorage:", error);
+		console.error("Failed to clear localStorage:", error);
 		return false;
 	}
 }
 
 /**
+ * Type guard function for validation
+ */
+type Validator<T> = (value: unknown) => value is T;
+
+/**
  * Safely parse JSON from localStorage
  * @param key - The key to retrieve
- * @param fallback - Fallback value if parsing fails
- * @returns Parsed JSON or fallback
+ * @param validator - Optional type guard function to validate parsed data
+ * @returns Parsed JSON or null if not found/invalid
  */
-export function safeGetJSON<T>(key: string, fallback: T): T {
+export function safeGetJSON<T = unknown>(key: string, validator?: Validator<T>): T | null {
 	if (!isString(key) || key.trim() === "") {
-		console.warn("Invalid localStorage key provided");
-		return fallback;
+		console.error("Invalid localStorage key provided");
+		return null;
 	}
 	try {
 		const value = localStorage.getItem(key);
-		if (value === null) return fallback;
-		return JSON.parse(value) as T;
+		if (value === null) return null;
+		const parsed = JSON.parse(value);
+
+		// If validator provided, use it to validate the parsed data
+		if (validator && !validator(parsed)) {
+			return null;
+		}
+
+		return parsed as T;
 	} catch (error) {
-		console.warn(`Failed to parse localStorage JSON for '${key}':`, error);
-		return fallback;
+		console.error(`Failed to parse localStorage JSON for '${key}':`, error);
+		return null;
 	}
 }
 
@@ -114,14 +122,14 @@ export function safeGetJSON<T>(key: string, fallback: T): T {
  */
 export function safeSetJSON(key: string, value: unknown): boolean {
 	if (!isString(key) || key.trim() === "") {
-		console.warn("Invalid localStorage key provided");
+		console.error("Invalid localStorage key provided");
 		return false;
 	}
 	try {
 		localStorage.setItem(key, JSON.stringify(value));
 		return true;
 	} catch (error) {
-		console.warn(`Failed to set localStorage JSON for '${key}':`, error);
+		console.error(`Failed to set localStorage JSON for '${key}':`, error);
 		return false;
 	}
 }
