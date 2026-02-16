@@ -6,7 +6,7 @@
 export interface PerformanceMetric {
 	name: string;
 	value: number;
-	rating: 'good' | 'needs-improvement' | 'poor';
+	rating: "good" | "needs-improvement" | "poor";
 	timestamp: number;
 }
 
@@ -32,11 +32,11 @@ const THRESHOLDS = {
 /**
  * Rate a metric value as good, needs-improvement, or poor
  */
-function rateMetric(name: keyof typeof THRESHOLDS, value: number): PerformanceMetric['rating'] {
+function rateMetric(name: keyof typeof THRESHOLDS, value: number): PerformanceMetric["rating"] {
 	const threshold = THRESHOLDS[name];
-	if (value <= threshold.good) return 'good';
-	if (value <= threshold.poor) return 'needs-improvement';
-	return 'poor';
+	if (value <= threshold.good) return "good";
+	if (value <= threshold.poor) return "needs-improvement";
+	return "poor";
 }
 
 /**
@@ -70,7 +70,7 @@ function reportMetric(metric: PerformanceMetric): void {
 		try {
 			metricsCallback(metric);
 		} catch (error) {
-			console.warn('Error in metric callback:', error);
+			console.warn("Error in metric callback:", error);
 		}
 	}
 
@@ -87,7 +87,7 @@ function reportMetric(metric: PerformanceMetric): void {
  * Track Cumulative Layout Shift (CLS)
  */
 function trackCLS(): void {
-	if (!('PerformanceObserver' in window)) return;
+	if (!("PerformanceObserver" in window)) return;
 
 	let clsValue = 0;
 	const clsEntries: PerformanceEntry[] = [];
@@ -102,55 +102,55 @@ function trackCLS(): void {
 		}
 	});
 
-	observer.observe({ type: 'layout-shift', buffered: true });
+	observer.observe({ type: "layout-shift", buffered: true });
 
 	// Report on page hide
 	const reportCLS = () => {
 		reportMetric({
-			name: 'CLS',
+			name: "CLS",
 			value: clsValue,
-			rating: rateMetric('CLS', clsValue),
+			rating: rateMetric("CLS", clsValue),
 			timestamp: Date.now(),
 		});
 	};
 
-	addEventListener('visibilitychange', () => {
-		if (document.visibilityState === 'hidden') {
+	addEventListener("visibilitychange", () => {
+		if (document.visibilityState === "hidden") {
 			reportCLS();
 		}
 	});
 
 	// Also report on beforeunload
-	addEventListener('beforeunload', reportCLS);
+	addEventListener("beforeunload", reportCLS);
 }
 
 /**
  * Track First Input Delay (FID)
  */
 function trackFID(): void {
-	if (!('PerformanceObserver' in window)) return;
+	if (!("PerformanceObserver" in window)) return;
 
 	const observer = new PerformanceObserver((list) => {
 		for (const entry of list.getEntries()) {
 			const fidValue = (entry as any).processingStart - entry.startTime;
 			reportMetric({
-				name: 'FID',
+				name: "FID",
 				value: fidValue,
-				rating: rateMetric('FID', fidValue),
+				rating: rateMetric("FID", fidValue),
 				timestamp: Date.now(),
 			});
 			observer.disconnect();
 		}
 	});
 
-	observer.observe({ type: 'first-input', buffered: true });
+	observer.observe({ type: "first-input", buffered: true });
 }
 
 /**
  * Track Largest Contentful Paint (LCP)
  */
 function trackLCP(): void {
-	if (!('PerformanceObserver' in window)) return;
+	if (!("PerformanceObserver" in window)) return;
 
 	let lcpValue = 0;
 
@@ -160,22 +160,22 @@ function trackLCP(): void {
 		lcpValue = lastEntry.startTime;
 	});
 
-	observer.observe({ type: 'largest-contentful-paint', buffered: true });
+	observer.observe({ type: "largest-contentful-paint", buffered: true });
 
 	// Report on page hide
 	const reportLCP = () => {
 		if (lcpValue) {
 			reportMetric({
-				name: 'LCP',
+				name: "LCP",
 				value: lcpValue,
-				rating: rateMetric('LCP', lcpValue),
+				rating: rateMetric("LCP", lcpValue),
 				timestamp: Date.now(),
 			});
 		}
 	};
 
-	addEventListener('visibilitychange', () => {
-		if (document.visibilityState === 'hidden') {
+	addEventListener("visibilitychange", () => {
+		if (document.visibilityState === "hidden") {
 			reportLCP();
 			observer.disconnect();
 		}
@@ -186,15 +186,15 @@ function trackLCP(): void {
  * Track First Contentful Paint (FCP)
  */
 function trackFCP(): void {
-	if (!('PerformanceObserver' in window)) return;
+	if (!("PerformanceObserver" in window)) return;
 
 	const observer = new PerformanceObserver((list) => {
 		for (const entry of list.getEntries()) {
-			if (entry.name === 'first-contentful-paint') {
+			if (entry.name === "first-contentful-paint") {
 				reportMetric({
-					name: 'FCP',
+					name: "FCP",
 					value: entry.startTime,
-					rating: rateMetric('FCP', entry.startTime),
+					rating: rateMetric("FCP", entry.startTime),
 					timestamp: Date.now(),
 				});
 				observer.disconnect();
@@ -202,7 +202,7 @@ function trackFCP(): void {
 		}
 	});
 
-	observer.observe({ type: 'paint', buffered: true });
+	observer.observe({ type: "paint", buffered: true });
 }
 
 /**
@@ -217,9 +217,9 @@ function trackTTFB(): void {
 
 	if (ttfb >= 0) {
 		reportMetric({
-			name: 'TTFB',
+			name: "TTFB",
 			value: ttfb,
-			rating: rateMetric('TTFB', ttfb),
+			rating: rateMetric("TTFB", ttfb),
 			timestamp: Date.now(),
 		});
 	}
@@ -230,7 +230,7 @@ function trackTTFB(): void {
  * This is a newer metric that measures responsiveness
  */
 function trackINP(): void {
-	if (!('PerformanceObserver' in window)) return;
+	if (!("PerformanceObserver" in window)) return;
 
 	const observer = new PerformanceObserver((list) => {
 		let maxDuration = 0;
@@ -242,16 +242,16 @@ function trackINP(): void {
 
 		if (maxDuration > 0) {
 			reportMetric({
-				name: 'INP',
+				name: "INP",
 				value: maxDuration,
-				rating: rateMetric('INP', maxDuration),
+				rating: rateMetric("INP", maxDuration),
 				timestamp: Date.now(),
 			});
 		}
 	});
 
 	try {
-		observer.observe({ type: 'event', buffered: true, durationThreshold: 16 });
+		observer.observe({ type: "event", buffered: true, durationThreshold: 16 });
 	} catch {
 		// Event timing not supported
 	}
@@ -269,14 +269,14 @@ export function trackMark(name: string): void {
  * Measure time between two marks
  */
 export function measureMarks(name: string, startMark: string, endMark: string): number | null {
-	if (!window.performance?.measure) return null;
+	if (!window.performance || typeof performance.measure !== "function") return null;
 
 	try {
 		performance.measure(name, startMark, endMark);
-		const measure = performance.getEntriesByName(name, 'measure')[0];
+		const measure = performance.getEntriesByName(name, "measure")[0];
 		return measure?.duration || null;
 	} catch (error) {
-		console.warn('Failed to measure marks:', error);
+		console.warn("Failed to measure marks:", error);
 		return null;
 	}
 }
@@ -306,7 +306,7 @@ export function getNavigationMetrics(): Record<string, number> | null {
  */
 export function getResourceMetrics(): PerformanceResourceTiming[] {
 	if (!window.performance?.getEntriesByType) return [];
-	return performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+	return performance.getEntriesByType("resource") as PerformanceResourceTiming[];
 }
 
 /**
@@ -319,15 +319,17 @@ export function getMetrics(): WebVitalsMetrics {
 /**
  * Initialize performance monitoring
  */
-export function initializeMonitoring(options: {
-	enabled?: boolean;
-	onMetric?: MetricCallback;
-} = {}): void {
+export function initializeMonitoring(
+	options: {
+		enabled?: boolean;
+		onMetric?: MetricCallback;
+	} = {}
+): void {
 	const { enabled = true, onMetric: callback } = options;
 
 	if (!enabled) {
 		if (import.meta.env.DEV) {
-			console.log('[Monitoring] Performance monitoring disabled');
+			console.log("[Monitoring] Performance monitoring disabled");
 		}
 		return;
 	}
@@ -345,7 +347,7 @@ export function initializeMonitoring(options: {
 	trackINP();
 
 	if (import.meta.env.DEV) {
-		console.log('[Monitoring] Performance monitoring initialized');
+		console.log("[Monitoring] Performance monitoring initialized");
 	}
 }
 
@@ -366,13 +368,13 @@ export async function sendMetrics(endpoint: string): Promise<void> {
 		} else {
 			// Fallback to fetch
 			await fetch(endpoint, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(metricsData),
 				keepalive: true,
 			});
 		}
 	} catch (error) {
-		console.warn('Failed to send metrics:', error);
+		console.warn("Failed to send metrics:", error);
 	}
 }

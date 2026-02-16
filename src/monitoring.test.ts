@@ -2,7 +2,7 @@
  * Tests for monitoring module
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
 	initializeMonitoring,
 	onMetric,
@@ -12,96 +12,96 @@ import {
 	getNavigationMetrics,
 	getResourceMetrics,
 	sendMetrics,
-} from './monitoring';
+} from "./monitoring";
 
-describe('Monitoring', () => {
+describe("Monitoring", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
-	describe('initializeMonitoring', () => {
-		it('should initialize monitoring when enabled', () => {
+	describe("initializeMonitoring", () => {
+		it("should initialize monitoring when enabled", () => {
 			const callback = vi.fn();
 			initializeMonitoring({ enabled: true, onMetric: callback });
 			// Monitoring should be set up (observers created)
 			expect(true).toBe(true); // Basic initialization test
 		});
 
-		it('should not initialize when disabled', () => {
+		it("should not initialize when disabled", () => {
 			const callback = vi.fn();
 			initializeMonitoring({ enabled: false, onMetric: callback });
 			expect(callback).not.toHaveBeenCalled();
 		});
 	});
 
-	describe('onMetric', () => {
-		it('should set metric callback', () => {
+	describe("onMetric", () => {
+		it("should set metric callback", () => {
 			const callback = vi.fn();
 			onMetric(callback);
 			expect(callback).toBeDefined();
 		});
 	});
 
-	describe('getMetrics', () => {
-		it('should return collected metrics', () => {
+	describe("getMetrics", () => {
+		it("should return collected metrics", () => {
 			const metrics = getMetrics();
 			expect(metrics).toBeDefined();
-			expect(typeof metrics).toBe('object');
+			expect(typeof metrics).toBe("object");
 		});
 	});
 
-	describe('trackMark', () => {
-		it('should create performance mark if supported', () => {
+	describe("trackMark", () => {
+		it("should create performance mark if supported", () => {
 			if (window.performance?.mark) {
-				const spy = vi.spyOn(performance, 'mark');
-				trackMark('test-mark');
-				expect(spy).toHaveBeenCalledWith('test-mark');
+				const spy = vi.spyOn(performance, "mark");
+				trackMark("test-mark");
+				expect(spy).toHaveBeenCalledWith("test-mark");
 				spy.mockRestore();
 			}
 		});
 
-		it('should handle unsupported browsers gracefully', () => {
+		it("should handle unsupported browsers gracefully", () => {
 			const originalMark = performance.mark;
 			// @ts-expect-error - Testing unsupported browser
 			delete performance.mark;
-			expect(() => trackMark('test')).not.toThrow();
+			expect(() => trackMark("test")).not.toThrow();
 			performance.mark = originalMark;
 		});
 	});
 
-	describe('measureMarks', () => {
-		it('should measure between marks if supported', () => {
+	describe("measureMarks", () => {
+		it("should measure between marks if supported", () => {
 			if (window.performance?.mark && window.performance?.measure) {
-				trackMark('start');
-				trackMark('end');
-				const duration = measureMarks('test-measure', 'start', 'end');
-				expect(typeof duration).toBe('number');
+				trackMark("start");
+				trackMark("end");
+				const duration = measureMarks("test-measure", "start", "end");
+				expect(typeof duration).toBe("number");
 			}
 		});
 
-		it('should return null if measure not supported', () => {
+		it("should return null if measure not supported", () => {
 			const originalMeasure = performance.measure;
 			// @ts-expect-error - Testing unsupported browser
-			delete performance.measure;
-			const result = measureMarks('test', 'start', 'end');
+			performance.measure = undefined;
+			const result = measureMarks("test", "start", "end");
 			expect(result).toBeNull();
 			performance.measure = originalMeasure;
 		});
 	});
 
-	describe('getNavigationMetrics', () => {
-		it('should return navigation timing metrics if available', () => {
+	describe("getNavigationMetrics", () => {
+		it("should return navigation timing metrics if available", () => {
 			if (window.performance?.timing) {
 				const metrics = getNavigationMetrics();
 				expect(metrics).toBeDefined();
 				if (metrics) {
-					expect(typeof metrics.dnsLookup).toBe('number');
-					expect(typeof metrics.pageLoad).toBe('number');
+					expect(typeof metrics.dnsLookup).toBe("number");
+					expect(typeof metrics.pageLoad).toBe("number");
 				}
 			}
 		});
 
-		it('should return null if timing API not supported', () => {
+		it("should return null if timing API not supported", () => {
 			const originalTiming = performance.timing;
 			// @ts-expect-error - Testing unsupported browser
 			delete performance.timing;
@@ -112,31 +112,31 @@ describe('Monitoring', () => {
 		});
 	});
 
-	describe('getResourceMetrics', () => {
-		it('should return resource timing entries', () => {
+	describe("getResourceMetrics", () => {
+		it("should return resource timing entries", () => {
 			const resources = getResourceMetrics();
 			expect(Array.isArray(resources)).toBe(true);
 		});
 	});
 
-	describe('sendMetrics', () => {
-		it('should send metrics via sendBeacon if available', async () => {
+	describe("sendMetrics", () => {
+		it("should send metrics via sendBeacon if available", async () => {
 			const sendBeaconSpy = vi.fn(() => true);
 			navigator.sendBeacon = sendBeaconSpy;
 
-			await sendMetrics('https://example.com/metrics');
+			await sendMetrics("https://example.com/metrics");
 			// May or may not send depending on collected metrics
 			expect(true).toBe(true);
 		});
 
-		it('should fallback to fetch if sendBeacon not available', async () => {
+		it("should fallback to fetch if sendBeacon not available", async () => {
 			const originalBeacon = navigator.sendBeacon;
 			// @ts-expect-error - Testing unsupported browser
 			delete navigator.sendBeacon;
 
 			global.fetch = vi.fn(() => Promise.resolve({} as Response));
 
-			await sendMetrics('https://example.com/metrics');
+			await sendMetrics("https://example.com/metrics");
 			// Should not throw
 			expect(true).toBe(true);
 
