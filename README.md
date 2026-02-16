@@ -1,7 +1,7 @@
 ![Wordle+](https://raw.githubusercontent.com/MikhaD/wordle/main/public/img/og_1200x630.png)
 <div align="center">
   <a href="https://mikhad.github.io/wordle/" ><img src="https://github.com/MikhaD/wordle/workflows/Publish/badge.svg?branch=main" alt="Publish workflow"/></a>
-  <img src="https://img.shields.io/github/package-json/v/MikhaD/wordle" alt="GitHub package.json version" />
+  <img src="https://img.shields.io/github/package-json/v/slmingol/wordle" alt="GitHub package.json version" />
   <img src="https://img.shields.io/badge/TypeScript-100%25%20type%20safe-blue" alt="TypeScript 100% type safe" />
   <img src="https://img.shields.io/badge/ESLint-0%20warnings-brightgreen" alt="ESLint 0 warnings" />
   <img src="https://img.shields.io/badge/tests-122%20passing-brightgreen" alt="Tests passing" />
