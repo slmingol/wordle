@@ -81,4 +81,25 @@ export default defineConfig({
   optimizeDeps: {
     include: ['svelte', 'svelte/store', 'svelte/transition'],
   },
+  // Dev server configuration
+  server: {
+    // Middleware to redirect root to /wordle/
+    middlewareMode: false,
+    proxy: {},
+    // Use configureServer hook for redirect
+  },
+  // Configure server middleware for root redirect
+  configureServer(server) {
+    server.middlewares.use((req, res, next) => {
+      // Redirect root path to /wordle/ preserving port and host
+      if (req.url === '/') {
+        res.statusCode = 307; // Temporary redirect that doesn't get cached
+        res.setHeader('Location', '/wordle/');
+        res.setHeader('Cache-Control', 'no-store, must-revalidate');
+        res.end();
+        return;
+      }
+      next();
+    });
+  },
 });
