@@ -18,14 +18,23 @@ This guide covers running Wordle+ in Docker containers for both development and 
 
 Pre-built images are automatically published to GitHub Container Registry on every release.
 
+**Simplest method (using standalone compose file):**
+```bash
+# Download docker-compose.simple.yml and run
+docker compose -f docker-compose.simple.yml up
+
+# Access at http://localhost:5173/wordle/
+```
+
+**Or using the main docker-compose.yml:**
 ```bash
 # Pull and run the latest production image
 docker run -p 8080:80 ghcr.io/slmingol/wordle:latest
 
-# Or use docker-compose
+# Or use docker-compose with profile
 docker-compose --profile prod-prebuilt up
 
-# Access at http://localhost:8080
+# Access at http://localhost:8080/wordle/
 ```
 
 ### Development Mode
