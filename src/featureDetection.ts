@@ -119,31 +119,61 @@ export function hasES6(): boolean {
  * Check if CSS Grid is supported
  */
 export function hasCSSGrid(): boolean {
-	return CSS.supports("display", "grid");
+	try {
+		return (
+			typeof CSS !== "undefined" &&
+			typeof CSS.supports === "function" &&
+			CSS.supports("display", "grid")
+		);
+	} catch (e) {
+		return false;
+	}
 }
 
 /**
  * Check if CSS Flexbox is supported
  */
 export function hasCSSFlexbox(): boolean {
-	return CSS.supports("display", "flex");
+	try {
+		return (
+			typeof CSS !== "undefined" &&
+			typeof CSS.supports === "function" &&
+			CSS.supports("display", "flex")
+		);
+	} catch (e) {
+		return false;
+	}
 }
 
 /**
  * Check if CSS Custom Properties (variables) are supported
  */
 export function hasCSSCustomProperties(): boolean {
-	return CSS.supports("--test", "0");
+	try {
+		return (
+			typeof CSS !== "undefined" &&
+			typeof CSS.supports === "function" &&
+			CSS.supports("--test", "0")
+		);
+	} catch (e) {
+		return false;
+	}
 }
 
 /**
  * Check if CSS backdrop-filter is supported
  */
 export function hasCSSBackdrop(): boolean {
-	return (
-		CSS.supports("backdrop-filter", "blur(10px)") ||
-		CSS.supports("-webkit-backdrop-filter", "blur(10px)")
-	);
+	try {
+		return (
+			typeof CSS !== "undefined" &&
+			typeof CSS.supports === "function" &&
+			(CSS.supports("backdrop-filter", "blur(10px)") ||
+				CSS.supports("-webkit-backdrop-filter", "blur(10px)"))
+		);
+	} catch (e) {
+		return false;
+	}
 }
 
 /**

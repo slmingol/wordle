@@ -16,14 +16,14 @@ describe("featureDetection", () => {
 		});
 
 		it("should return false when localStorage throws error", () => {
-			const originalSetItem = Storage.prototype.setItem;
-			Storage.prototype.setItem = vi.fn(() => {
+			const originalSetItem = window.localStorage.setItem;
+			window.localStorage.setItem = vi.fn(() => {
 				throw new Error("QuotaExceededError");
 			});
 
 			expect(hasLocalStorage()).toBe(false);
 
-			Storage.prototype.setItem = originalSetItem;
+			window.localStorage.setItem = originalSetItem;
 		});
 	});
 
@@ -33,14 +33,14 @@ describe("featureDetection", () => {
 		});
 
 		it("should return false when sessionStorage throws error", () => {
-			const originalSetItem = Storage.prototype.setItem;
-			Storage.prototype.setItem = vi.fn(() => {
+			const originalSetItem = window.sessionStorage.setItem;
+			window.sessionStorage.setItem = vi.fn(() => {
 				throw new Error("SecurityError");
 			});
 
 			expect(hasSessionStorage()).toBe(false);
 
-			Storage.prototype.setItem = originalSetItem;
+			window.sessionStorage.setItem = originalSetItem;
 		});
 	});
 
@@ -78,8 +78,19 @@ describe("featureDetection", () => {
 
 	describe("hasServiceWorker", () => {
 		it("should return true when serviceWorker is in navigator", () => {
-			// jsdom includes serviceWorker by default
+			// Mock serviceWorker in navigator if not present
+			const hasServiceWorkerSupport = "serviceWorker" in navigator;
+			if (!hasServiceWorkerSupport) {
+				// @ts-expect-error - Testing serviceWorker presence
+				navigator.serviceWorker = {};
+			}
+
 			expect(hasServiceWorker()).toBe(true);
+
+			if (!hasServiceWorkerSupport) {
+				// @ts-expect-error - Cleanup
+				delete navigator.serviceWorker;
+			}
 		});
 	});
 
@@ -91,18 +102,27 @@ describe("featureDetection", () => {
 
 	describe("isBrowserSupported", () => {
 		it("should return true when all required features are available", () => {
+			// Mock CSS.supports for the test environment
+			const originalCSS = globalThis.CSS;
+			globalThis.CSS = {
+				supports: vi.fn((property: string, value: string) => true),
+			} as any;
+
 			expect(isBrowserSupported()).toBe(true);
+
+			// Restore original CSS
+			globalThis.CSS = originalCSS;
 		});
 
 		it("should return false when localStorage is not available", () => {
-			const originalSetItem = Storage.prototype.setItem;
-			Storage.prototype.setItem = vi.fn(() => {
-				throw new Error("QuotaExceededError");
+			const originalSetItem = window.localStorage.setItem;
+			window.localStorage.setItem = vi.fn(() => {
+				throw new Error(" QuotaExceededError");
 			});
 
 			expect(isBrowserSupported()).toBe(false);
 
-			Storage.prototype.setItem = originalSetItem;
+			window.localStorage.setItem = originalSetItem;
 		});
 	});
 });
