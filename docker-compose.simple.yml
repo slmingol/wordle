@@ -1,0 +1,12 @@
+# Simple Docker Compose for Wordle+ (using pre-built image)
+# Usage: docker compose -f docker-compose.simple.yml up
+
+services:
+  wordle:
+    image: ghcr.io/slmingol/wordle:latest
+    container_name: wordle
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
