@@ -106,7 +106,7 @@ describe("featureDetection", () => {
 			const originalCSS = globalThis.CSS;
 			globalThis.CSS = {
 				supports: vi.fn((_property: string, _value: string) => true),
-			} as any;
+			} as unknown as typeof CSS;
 
 			expect(isBrowserSupported()).toBe(true);
 

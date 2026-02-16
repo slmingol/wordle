@@ -5,6 +5,27 @@
 
 import { safeGetItem, safeSetItem } from "./localStorage";
 
+// Extend Window interface for analytics providers
+declare global {
+	interface Window {
+		plausible?: (
+			event: string,
+			options?: { url?: string; props?: Record<string, unknown> }
+		) => void;
+		fathom?: {
+			trackPageview: (options?: { url?: string }) => void;
+			trackGoal: (code: string, cents: number) => void;
+		};
+		gtag?: (...args: unknown[]) => void;
+		dataLayer?: unknown[];
+		doNotTrack?: string;
+	}
+
+	interface Navigator {
+		msDoNotTrack?: string;
+	}
+}
+
 export interface AnalyticsConfig {
 	enabled: boolean;
 	provider: "plausible" | "fathom" | "google" | "none";
@@ -36,9 +57,7 @@ let consentGiven = false;
  */
 function isDNTEnabled(): boolean {
 	return (
-		navigator.doNotTrack === "1" ||
-		(window as any).doNotTrack === "1" ||
-		(navigator as any).msDoNotTrack === "1"
+		navigator.doNotTrack === "1" || window.doNotTrack === "1" || navigator.msDoNotTrack === "1"
 	);
 }
 
@@ -154,11 +173,11 @@ function initializeGoogleAnalytics(): void {
 	document.head.appendChild(script);
 
 	// Initialize gtag
-	(window as any).dataLayer = (window as any).dataLayer || [];
-	function gtag(..._args: any[]) {
-		(window as any).dataLayer.push(arguments);
+	window.dataLayer = window.dataLayer || [];
+	function gtag(...args: unknown[]) {
+		window.dataLayer?.push(args);
 	}
-	(window as any).gtag = gtag;
+	window.gtag = gtag;
 
 	gtag("js", new Date());
 	gtag("config", config.trackingId, {
@@ -177,18 +196,18 @@ export function trackPageView(url?: string): void {
 
 	switch (config.provider) {
 		case "plausible":
-			if ((window as any).plausible) {
-				(window as any).plausible("pageview", { url: pageUrl });
+			if (window.plausible) {
+				window.plausible("pageview", { url: pageUrl });
 			}
 			break;
 		case "fathom":
-			if ((window as any).fathom) {
-				(window as any).fathom.trackPageview({ url: pageUrl });
+			if (window.fathom) {
+				window.fathom.trackPageview({ url: pageUrl });
 			}
 			break;
 		case "google":
-			if ((window as any).gtag) {
-				(window as any).gtag("config", config.trackingId, {
+			if (window.gtag) {
+				window.gtag("config", config.trackingId, {
 					page_path: pageUrl,
 				});
 			}
@@ -210,18 +229,18 @@ export function trackEvent(event: AnalyticsEvent): void {
 
 	switch (config.provider) {
 		case "plausible":
-			if ((window as any).plausible) {
-				(window as any).plausible(name, { props: properties });
+			if (window.plausible) {
+				window.plausible(name, { props: properties });
 			}
 			break;
 		case "fathom":
-			if ((window as any).fathom) {
-				(window as any).fathom.trackGoal(name, 0);
+			if (window.fathom) {
+				window.fathom.trackGoal(name, 0);
 			}
 			break;
 		case "google":
-			if ((window as any).gtag) {
-				(window as any).gtag("event", name, properties);
+			if (window.gtag) {
+				window.gtag("event", name, properties);
 			}
 			break;
 	}

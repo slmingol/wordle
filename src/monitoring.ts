@@ -3,6 +3,20 @@
  * Tracks user experience metrics for performance optimization
  */
 
+// Extended performance entry types for Web Vitals
+interface LayoutShiftEntry extends PerformanceEntry {
+	hadRecentInput: boolean;
+	value: number;
+}
+
+interface FirstInputEntry extends PerformanceEntry {
+	processingStart: number;
+}
+
+interface LongTaskEntry extends PerformanceEntry {
+	duration: number;
+}
+
 export interface PerformanceMetric {
 	name: string;
 	value: number;
@@ -94,9 +108,10 @@ function trackCLS(): void {
 
 	const observer = new PerformanceObserver((list) => {
 		for (const entry of list.getEntries()) {
+			const layoutShift = entry as LayoutShiftEntry;
 			// Only count layout shifts without recent user input
-			if (!(entry as any).hadRecentInput) {
-				clsValue += (entry as any).value;
+			if (!layoutShift.hadRecentInput) {
+				clsValue += layoutShift.value;
 				clsEntries.push(entry);
 			}
 		}
@@ -132,7 +147,8 @@ function trackFID(): void {
 
 	const observer = new PerformanceObserver((list) => {
 		for (const entry of list.getEntries()) {
-			const fidValue = (entry as any).processingStart - entry.startTime;
+			const firstInput = entry as FirstInputEntry;
+			const fidValue = firstInput.processingStart - entry.startTime;
 			reportMetric({
 				name: "FID",
 				value: fidValue,
@@ -236,7 +252,8 @@ function trackINP(): void {
 		let maxDuration = 0;
 
 		for (const entry of list.getEntries()) {
-			const duration = (entry as any).duration || 0;
+			const longTask = entry as LongTaskEntry;
+			const duration = longTask.duration || 0;
 			maxDuration = Math.max(maxDuration, duration);
 		}
 
