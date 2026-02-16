@@ -6,6 +6,16 @@ import { version } from "./package.json";
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/wordle/",
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Use modern Sass API to avoid deprecation warnings
+        api: 'modern-compiler',
+        // Silence deprecation warnings if needed
+        silenceDeprecations: ['legacy-js-api'],
+      },
+    },
+  },
   plugins: [
     svelte({
       preprocess: vitePreprocess()
