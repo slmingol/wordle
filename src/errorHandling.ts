@@ -35,10 +35,30 @@ function createErrorStore() {
 		subscribe,
 		/**
 		 * Add an error to the store
+		 * Supports both simple (message, severity, details) and complex (full AppError object) signatures
 		 */
-		addError: (error: Omit<AppError, "id" | "timestamp">) => {
+		addError: (
+			messageOrError: string | Omit<AppError, "id" | "timestamp">,
+			severity: AppError["severity"] = "error",
+			details?: Record<string, unknown>
+		) => {
+			let errorData: Omit<AppError, "id" | "timestamp">;
+
+			// Check if first parameter is a string (simple API)
+			if (typeof messageOrError === "string") {
+				errorData = {
+					message: messageOrError,
+					severity,
+					recoverable: severity !== "fatal",
+					context: details,
+				};
+			} else {
+				// Complex API - full error object
+				errorData = messageOrError;
+			}
+
 			const appError: AppError = {
-				...error,
+				...errorData,
 				id: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
 				timestamp: Date.now(),
 			};
@@ -114,11 +134,33 @@ export function normalizeError(
 			severity,
 			component,
 			recoverable: severity !== "fatal",
+			context: error.stack ? { stack: error.stack } : undefined,
 		};
 	}
 
+	// Handle null and undefined
+	if (error === null || error === undefined) {
+		return {
+			message: "Unknown error occurred",
+			severity,
+			component,
+			recoverable: severity !== "fatal",
+		};
+	}
+
+	// Handle strings
+	if (typeof error === "string") {
+		return {
+			message: error,
+			severity,
+			component,
+			recoverable: severity !== "fatal",
+		};
+	}
+
+	// Handle objects
 	return {
-		message: String(error),
+		message: `Unknown error: ${JSON.stringify(error)}`,
 		severity,
 		component,
 		recoverable: severity !== "fatal",

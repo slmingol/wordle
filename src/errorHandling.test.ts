@@ -60,7 +60,7 @@ describe("errorHandling", () => {
 			errorStore.addError("Error with details", "error", { code: 404, url: "/api/test" });
 
 			const state = get(errorStore);
-			expect(state.errors[0].details).toEqual({ code: 404, url: "/api/test" });
+			expect(state.errors[0].context).toEqual({ code: 404, url: "/api/test" });
 		});
 	});
 
@@ -103,7 +103,7 @@ describe("errorHandling", () => {
 			const error = new Error("Test");
 			const normalized = normalizeError(error);
 
-			expect(normalized.details?.stack).toBeDefined();
+			expect(normalized.context?.stack).toBeDefined();
 		});
 
 		it("should handle null and undefined", () => {
