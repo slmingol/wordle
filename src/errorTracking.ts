@@ -3,12 +3,11 @@
  * Supports multiple error tracking services (Sentry, etc.)
  */
 
-
-import type { AppError } from './errorHandling';
+import type { AppError } from "./errorHandling";
 
 export interface ErrorTrackingConfig {
 	enabled: boolean;
-	provider: 'sentry' | 'custom' | 'none';
+	provider: "sentry" | "custom" | "none";
 	dsn?: string; // Data Source Name (for Sentry)
 	environment?: string; // production, staging, development
 	release?: string; // App version
@@ -19,7 +18,7 @@ export interface ErrorTrackingConfig {
 export interface ErrorReport {
 	message: string;
 	stack?: string;
-	level: 'fatal' | 'error' | 'warning' | 'info';
+	level: "fatal" | "error" | "warning" | "info";
 	timestamp: number;
 	url: string;
 	userAgent: string;
@@ -31,15 +30,15 @@ export interface Breadcrumb {
 	timestamp: number;
 	category: string;
 	message: string;
-	level: 'info' | 'warning' | 'error';
+	level: "info" | "warning" | "error";
 	data?: Record<string, unknown>;
 }
 
 let config: ErrorTrackingConfig = {
 	enabled: false,
-	provider: 'none',
+	provider: "none",
 	environment: import.meta.env.MODE,
-	release: import.meta.env.VITE_APP_VERSION || 'unknown',
+	release: import.meta.env.VITE_APP_VERSION || "unknown",
 	sampleRate: 1.0,
 };
 
@@ -54,23 +53,23 @@ export function initializeErrorTracking(userConfig: Partial<ErrorTrackingConfig>
 
 	if (!config.enabled) {
 		if (import.meta.env.DEV) {
-			console.log('[Error Tracking] Disabled');
+			console.log("[Error Tracking] Disabled");
 		}
 		return;
 	}
 
 	// Initialize provider
 	switch (config.provider) {
-		case 'sentry':
+		case "sentry":
 			initializeSentry();
 			break;
-		case 'custom':
+		case "custom":
 			// Custom implementation can be added here
 			break;
 	}
 
 	if (import.meta.env.DEV) {
-		console.log('[Error Tracking] Initialized with provider:', config.provider);
+		console.log("[Error Tracking] Initialized with provider:", config.provider);
 	}
 }
 
@@ -79,7 +78,7 @@ export function initializeErrorTracking(userConfig: Partial<ErrorTrackingConfig>
  */
 function initializeSentry(): void {
 	if (!config.dsn) {
-		console.warn('[Error Tracking] Sentry DSN not configured');
+		console.warn("[Error Tracking] Sentry DSN not configured");
 		return;
 	}
 
@@ -105,10 +104,10 @@ function initializeSentry(): void {
 		});
 
 		if (import.meta.env.DEV) {
-			console.log('[Error Tracking] Sentry initialized');
+			console.log("[Error Tracking] Sentry initialized");
 		}
 	} else {
-		console.warn('[Error Tracking] Sentry SDK not loaded');
+		console.warn("[Error Tracking] Sentry SDK not loaded");
 	}
 }
 
@@ -119,20 +118,20 @@ export function trackError(error: Error | string, context?: Record<string, unkno
 	if (!config.enabled) {
 		// Still log to console in development
 		if (import.meta.env.DEV) {
-			console.error('[Error Tracking] Would track:', error, context);
+			console.error("[Error Tracking] Would track:", error, context);
 		}
 		return;
 	}
 
 	// Sample rate check
-	if (Math.random() > (config.sampleRate || 1.0)) {
+	if (Math.random() > (config.sampleRate ?? 1.0)) {
 		return;
 	}
 
 	const errorReport: ErrorReport = {
-		message: typeof error === 'string' ? error : error.message,
-		stack: typeof error === 'string' ? undefined : error.stack,
-		level: 'error',
+		message: typeof error === "string" ? error : error.message,
+		stack: typeof error === "string" ? undefined : error.stack,
+		level: "error",
 		timestamp: Date.now(),
 		url: window.location.href,
 		userAgent: navigator.userAgent,
@@ -146,10 +145,10 @@ export function trackError(error: Error | string, context?: Record<string, unkno
 
 	// Send to provider
 	switch (config.provider) {
-		case 'sentry':
+		case "sentry":
 			sendToSentry(processed);
 			break;
-		case 'custom':
+		case "custom":
 			sendToCustomEndpoint(processed);
 			break;
 	}
@@ -172,7 +171,7 @@ function sendToSentry(errorReport: ErrorReport): void {
 		}
 
 		// Add breadcrumbs
-		errorReport.breadcrumbs?.forEach(breadcrumb => {
+		errorReport.breadcrumbs?.forEach((breadcrumb) => {
 			scope.addBreadcrumb({
 				timestamp: breadcrumb.timestamp / 1000, // Sentry uses seconds
 				category: breadcrumb.category,
@@ -198,25 +197,25 @@ async function sendToCustomEndpoint(errorReport: ErrorReport): Promise<void> {
 	try {
 		// Use sendBeacon if available (reliable for page unload)
 		if (navigator.sendBeacon) {
-			navigator.sendBeacon('/api/errors', JSON.stringify(errorReport));
+			navigator.sendBeacon("/api/errors", JSON.stringify(errorReport));
 		} else {
 			// Fallback to fetch
-			await fetch('/api/errors', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+			await fetch("/api/errors", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(errorReport),
 				keepalive: true,
 			});
 		}
 	} catch (error) {
-		console.warn('[Error Tracking] Failed to send error:', error);
+		console.warn("[Error Tracking] Failed to send error:", error);
 	}
 }
 
 /**
  * Add a breadcrumb (for debugging context)
  */
-export function addBreadcrumb(breadcrumb: Omit<Breadcrumb, 'timestamp'>): void {
+export function addBreadcrumb(breadcrumb: Omit<Breadcrumb, "timestamp">): void {
 	const fullBreadcrumb: Breadcrumb = {
 		...breadcrumb,
 		timestamp: Date.now(),
@@ -230,7 +229,7 @@ export function addBreadcrumb(breadcrumb: Omit<Breadcrumb, 'timestamp'>): void {
 	}
 
 	// Also send to Sentry if available
-	if ((window as any).Sentry && config.enabled && config.provider === 'sentry') {
+	if ((window as any).Sentry && config.enabled && config.provider === "sentry") {
 		(window as any).Sentry.addBreadcrumb({
 			timestamp: fullBreadcrumb.timestamp / 1000,
 			category: fullBreadcrumb.category,
@@ -252,7 +251,7 @@ export function setUserContext(user: {
 }): void {
 	if (!config.enabled) return;
 
-	if ((window as any).Sentry && config.provider === 'sentry') {
+	if ((window as any).Sentry && config.provider === "sentry") {
 		(window as any).Sentry.setUser(user);
 	}
 }
@@ -263,7 +262,7 @@ export function setUserContext(user: {
 export function setContext(key: string, value: Record<string, unknown>): void {
 	if (!config.enabled) return;
 
-	if ((window as any).Sentry && config.provider === 'sentry') {
+	if ((window as any).Sentry && config.provider === "sentry") {
 		(window as any).Sentry.setContext(key, value);
 	}
 }
@@ -274,7 +273,7 @@ export function setContext(key: string, value: Record<string, unknown>): void {
 export function setTag(key: string, value: string): void {
 	if (!config.enabled) return;
 
-	if ((window as any).Sentry && config.provider === 'sentry') {
+	if ((window as any).Sentry && config.provider === "sentry") {
 		(window as any).Sentry.setTag(key, value);
 	}
 }
@@ -284,10 +283,14 @@ export function setTag(key: string, value: string): void {
  */
 export function trackAppError(appError: AppError): void {
 	addBreadcrumb({
-		category: 'error',
+		category: "error",
 		message: appError.message,
-		level: appError.severity === 'fatal' || appError.severity === 'error' ? 'error' : 
-		       appError.severity === 'warning' ? 'warning' : 'info',
+		level:
+			appError.severity === "fatal" || appError.severity === "error"
+				? "error"
+				: appError.severity === "warning"
+					? "warning"
+					: "info",
 		data: {
 			component: appError.component,
 			recoverable: appError.recoverable,
@@ -295,7 +298,7 @@ export function trackAppError(appError: AppError): void {
 		},
 	});
 
-	if (appError.severity === 'fatal' || appError.severity === 'error') {
+	if (appError.severity === "fatal" || appError.severity === "error") {
 		trackError(appError.message, {
 			severity: appError.severity,
 			component: appError.component,
@@ -310,9 +313,9 @@ export function trackAppError(appError: AppError): void {
  */
 function sentryEventToErrorReport(event: any): ErrorReport {
 	return {
-		message: event.message || event.exception?.values?.[0]?.value || 'Unknown error',
+		message: event.message || event.exception?.values?.[0]?.value || "Unknown error",
 		stack: event.exception?.values?.[0]?.stacktrace,
-		level: event.level || 'error',
+		level: event.level || "error",
 		timestamp: Date.now(),
 		url: window.location.href,
 		userAgent: navigator.userAgent,
@@ -345,29 +348,33 @@ export function getErrorTrackingConfig(): Readonly<ErrorTrackingConfig> {
  * Common breadcrumb helpers
  */
 export const Breadcrumbs = {
-	navigation: (to: string) => addBreadcrumb({
-		category: 'navigation',
-		message: `Navigated to ${to}`,
-		level: 'info',
-	}),
-	
-	userAction: (action: string, data?: Record<string, unknown>) => addBreadcrumb({
-		category: 'user',
-		message: action,
-		level: 'info',
-		data,
-	}),
-	
-	apiCall: (endpoint: string, method: string, status?: number) => addBreadcrumb({
-		category: 'api',
-		message: `${method} ${endpoint}`,
-		level: status && status >= 400 ? 'error' : 'info',
-		data: { endpoint, method, status },
-	}),
-	
-	stateChange: (store: string, change: string) => addBreadcrumb({
-		category: 'state',
-		message: `${store}: ${change}`,
-		level: 'info',
-	}),
+	navigation: (to: string) =>
+		addBreadcrumb({
+			category: "navigation",
+			message: `Navigated to ${to}`,
+			level: "info",
+		}),
+
+	userAction: (action: string, data?: Record<string, unknown>) =>
+		addBreadcrumb({
+			category: "user",
+			message: action,
+			level: "info",
+			data,
+		}),
+
+	apiCall: (endpoint: string, method: string, status?: number) =>
+		addBreadcrumb({
+			category: "api",
+			message: `${method} ${endpoint}`,
+			level: status && status >= 400 ? "error" : "info",
+			data: { endpoint, method, status },
+		}),
+
+	stateChange: (store: string, change: string) =>
+		addBreadcrumb({
+			category: "state",
+			message: `${store}: ${change}`,
+			level: "info",
+		}),
 };
