@@ -108,7 +108,7 @@ export function arraysEqual<T>(a: T[], b: T[]): boolean {
 	return a.every((val, index) => {
 		// Deep comparison for nested arrays
 		if (Array.isArray(val) && Array.isArray(b[index])) {
-			return arraysEqual(val as any[], b[index] as any[]);
+			return arraysEqual(val as unknown[], b[index] as unknown[]);
 		}
 		return val === b[index];
 	});

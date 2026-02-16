@@ -105,8 +105,8 @@ describe("featureDetection", () => {
 			// Mock CSS.supports for the test environment
 			const originalCSS = globalThis.CSS;
 			globalThis.CSS = {
-				supports: vi.fn((property: string, value: string) => true),
-			} as any;
+				supports: vi.fn((_property: string, _value: string) => true),
+			} as unknown as typeof CSS;
 
 			expect(isBrowserSupported()).toBe(true);
 

@@ -5,6 +5,54 @@
 
 import type { AppError } from "./errorHandling";
 
+// Sentry SDK type definitions
+interface SentryScope {
+	setContext(key: string, value: unknown): void;
+	setTag(key: string, value: string): void;
+	setUser(user: Record<string, unknown>): void;
+}
+
+interface SentryEvent {
+	message?: string;
+	exception?: {
+		values?: Array<{
+			value?: string;
+			stacktrace?: string;
+		}>;
+	};
+	level?: string;
+	contexts?: Record<string, unknown>;
+	breadcrumbs?: unknown[];
+}
+
+interface SentrySDK {
+	init(options: {
+		dsn?: string;
+		environment?: string;
+		release?: string;
+		sampleRate?: number;
+		beforeSend?: (event: SentryEvent) => SentryEvent | null;
+	}): void;
+	captureException(error: Error): void;
+	withScope(callback: (scope: SentryScope) => void): void;
+	addBreadcrumb(breadcrumb: {
+		timestamp: number;
+		category: string;
+		message: string;
+		level: string;
+		data?: Record<string, unknown>;
+	}): void;
+	setUser(user: Record<string, unknown>): void;
+	setContext(key: string, value: Record<string, unknown>): void;
+	setTag(key: string, value: string): void;
+}
+
+declare global {
+	interface Window {
+		Sentry?: SentrySDK;
+	}
+}
+
 export interface ErrorTrackingConfig {
 	enabled: boolean;
 	provider: "sentry" | "custom" | "none";
@@ -53,7 +101,7 @@ export function initializeErrorTracking(userConfig: Partial<ErrorTrackingConfig>
 
 	if (!config.enabled) {
 		if (import.meta.env.DEV) {
-			console.log("[Error Tracking] Disabled");
+			console.warn("[Error Tracking] Disabled");
 		}
 		return;
 	}
@@ -69,7 +117,7 @@ export function initializeErrorTracking(userConfig: Partial<ErrorTrackingConfig>
 	}
 
 	if (import.meta.env.DEV) {
-		console.log("[Error Tracking] Initialized with provider:", config.provider);
+		console.warn("[Error Tracking] Initialized with provider:", config.provider);
 	}
 }
 
@@ -83,13 +131,13 @@ function initializeSentry(): void {
 	}
 
 	// Check if Sentry is already loaded
-	if ((window as any).Sentry) {
-		(window as any).Sentry.init({
+	if (window.Sentry) {
+		window.Sentry.init({
 			dsn: config.dsn,
 			environment: config.environment,
 			release: config.release,
 			sampleRate: config.sampleRate,
-			beforeSend: (event: any) => {
+			beforeSend: (event: SentryEvent) => {
 				// Apply custom beforeSend if provided
 				if (config.beforeSend) {
 					const errorReport = sentryEventToErrorReport(event);
@@ -104,7 +152,7 @@ function initializeSentry(): void {
 		});
 
 		if (import.meta.env.DEV) {
-			console.log("[Error Tracking] Sentry initialized");
+			console.warn("[Error Tracking] Sentry initialized");
 		}
 	} else {
 		console.warn("[Error Tracking] Sentry SDK not loaded");
@@ -158,11 +206,11 @@ export function trackError(error: Error | string, context?: Record<string, unkno
  * Send error to Sentry
  */
 function sendToSentry(errorReport: ErrorReport): void {
-	if (!(window as any).Sentry) return;
+	if (!window.Sentry) return;
 
-	const Sentry = (window as any).Sentry;
+	const Sentry = window.Sentry;
 
-	Sentry.withScope((scope: any) => {
+	Sentry.withScope((scope: SentryScope) => {
 		// Add context
 		if (errorReport.context) {
 			Object.entries(errorReport.context).forEach(([key, value]) => {
@@ -229,8 +277,8 @@ export function addBreadcrumb(breadcrumb: Omit<Breadcrumb, "timestamp">): void {
 	}
 
 	// Also send to Sentry if available
-	if ((window as any).Sentry && config.enabled && config.provider === "sentry") {
-		(window as any).Sentry.addBreadcrumb({
+	if (window.Sentry && config.enabled && config.provider === "sentry") {
+		window.Sentry.addBreadcrumb({
 			timestamp: fullBreadcrumb.timestamp / 1000,
 			category: fullBreadcrumb.category,
 			message: fullBreadcrumb.message,
@@ -251,8 +299,8 @@ export function setUserContext(user: {
 }): void {
 	if (!config.enabled) return;
 
-	if ((window as any).Sentry && config.provider === "sentry") {
-		(window as any).Sentry.setUser(user);
+	if (window.Sentry && config.provider === "sentry") {
+		window.Sentry.setUser(user);
 	}
 }
 
@@ -262,8 +310,8 @@ export function setUserContext(user: {
 export function setContext(key: string, value: Record<string, unknown>): void {
 	if (!config.enabled) return;
 
-	if ((window as any).Sentry && config.provider === "sentry") {
-		(window as any).Sentry.setContext(key, value);
+	if (window.Sentry && config.provider === "sentry") {
+		window.Sentry.setContext(key, value);
 	}
 }
 
@@ -273,8 +321,8 @@ export function setContext(key: string, value: Record<string, unknown>): void {
 export function setTag(key: string, value: string): void {
 	if (!config.enabled) return;
 
-	if ((window as any).Sentry && config.provider === "sentry") {
-		(window as any).Sentry.setTag(key, value);
+	if (window.Sentry && config.provider === "sentry") {
+		window.Sentry.setTag(key, value);
 	}
 }
 
@@ -311,7 +359,7 @@ export function trackAppError(appError: AppError): void {
 /**
  * Helper to convert Sentry event to ErrorReport
  */
-function sentryEventToErrorReport(event: any): ErrorReport {
+function sentryEventToErrorReport(event: SentryEvent): ErrorReport {
 	return {
 		message: event.message || event.exception?.values?.[0]?.value || "Unknown error",
 		stack: event.exception?.values?.[0]?.stacktrace,
@@ -327,7 +375,7 @@ function sentryEventToErrorReport(event: any): ErrorReport {
 /**
  * Helper to convert ErrorReport to Sentry event
  */
-function errorReportToSentryEvent(report: ErrorReport): any {
+function errorReportToSentryEvent(report: ErrorReport): SentryEvent {
 	return {
 		message: report.message,
 		level: report.level,

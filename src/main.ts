@@ -39,9 +39,11 @@ initializeMonitoring({
 	onMetric: (metric) => {
 		// Log in development
 		if (import.meta.env.DEV) {
-			console.log(`[Performance] ${metric.name}: ${Math.round(metric.value)}ms (${metric.rating})`);
+			console.warn(
+				`[Performance] ${metric.name}: ${Math.round(metric.value)}ms (${metric.rating})`
+			);
 		}
-		
+
 		// Send to endpoint if configured
 		if (config.performance.reportEndpoint) {
 			// Debounced sending happens automatically
@@ -56,7 +58,7 @@ initializeAnalytics(config.analytics);
 initializeErrorTracking(config.errorTracking);
 
 // Connect error store to error tracking
-errorStore.subscribe(state => {
+errorStore.subscribe((state) => {
 	if (state.lastError) {
 		trackAppError(state.lastError);
 	}
@@ -68,9 +70,9 @@ if (config.performance.enabled && config.performance.reportEndpoint) {
 	setInterval(() => {
 		sendMetrics(config.performance.reportEndpoint!);
 	}, interval);
-	
+
 	// Also send on page unload
-	window.addEventListener('beforeunload', () => {
+	window.addEventListener("beforeunload", () => {
 		sendMetrics(config.performance.reportEndpoint!);
 	});
 }

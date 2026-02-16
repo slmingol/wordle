@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
-	import { handleError, type AppError } from "../errorHandling";
+	import { handleError } from "../errorHandling";
 
 	export let component: string = "Component";
 	export let fallback: boolean = true;
 	export let showError: boolean = false;
 
 	let hasError = false;
-	let error: AppError | null = null;
 	let errorMessage = "";
 
 	// Catch errors during component initialization

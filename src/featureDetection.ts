@@ -30,7 +30,7 @@ export function hasLocalStorage(): boolean {
 		window.localStorage.setItem(test, test);
 		window.localStorage.removeItem(test);
 		return true;
-	} catch (e) {
+	} catch {
 		return false;
 	}
 }
@@ -44,7 +44,7 @@ export function hasSessionStorage(): boolean {
 		window.sessionStorage.setItem(test, test);
 		window.sessionStorage.removeItem(test);
 		return true;
-	} catch (e) {
+	} catch {
 		return false;
 	}
 }
@@ -100,17 +100,9 @@ export function hasWebWorkers(): boolean {
  */
 export function hasES6(): boolean {
 	try {
-		// Check for ES6 features without using Function constructor (CSP-friendly)
-		// Check for: const/let, arrow functions, template literals, spread, destructuring
-		const testObj = { a: 1, b: 2 };
-		const { a, ...rest } = testObj;
-		const arr = [1, 2, 3];
-		const [first, ...remaining] = arr;
-		const arrowFn = () => true;
-		const template = `test ${a}`;
-
+		// Check for ES6 features: Promise and Symbol are good indicators
 		return typeof Promise !== "undefined" && typeof Symbol !== "undefined";
-	} catch (e) {
+	} catch {
 		return false;
 	}
 }
@@ -125,7 +117,7 @@ export function hasCSSGrid(): boolean {
 			typeof CSS.supports === "function" &&
 			CSS.supports("display", "grid")
 		);
-	} catch (e) {
+	} catch {
 		return false;
 	}
 }
@@ -140,7 +132,7 @@ export function hasCSSFlexbox(): boolean {
 			typeof CSS.supports === "function" &&
 			CSS.supports("display", "flex")
 		);
-	} catch (e) {
+	} catch {
 		return false;
 	}
 }
@@ -155,7 +147,7 @@ export function hasCSSCustomProperties(): boolean {
 			typeof CSS.supports === "function" &&
 			CSS.supports("--test", "0")
 		);
-	} catch (e) {
+	} catch {
 		return false;
 	}
 }
@@ -171,7 +163,7 @@ export function hasCSSBackdrop(): boolean {
 			(CSS.supports("backdrop-filter", "blur(10px)") ||
 				CSS.supports("-webkit-backdrop-filter", "blur(10px)"))
 		);
-	} catch (e) {
+	} catch {
 		return false;
 	}
 }
@@ -243,8 +235,8 @@ export function showUnsupportedBrowserWarning(): void {
  * Log feature support for debugging
  */
 export function logFeatureSupport(): void {
-	if (typeof console !== "undefined" && console.table) {
+	if (typeof console !== "undefined") {
 		const features = detectFeatures();
-		console.table(features);
+		console.warn("[Feature Detection]", features);
 	}
 }
