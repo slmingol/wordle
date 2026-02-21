@@ -15,7 +15,7 @@
 			}/${state.board.words.length}\n\n    ${state.board.state
 				.slice(0, state.guesses)
 				.map((r) => r.join(""))
-				.join("\n    ")}\nmikhad.github.io/wordle`
+				.join("\n    ")}\n${window.location.host}${window.location.pathname}`
 		);
 		toaster.pop("Copied");
 	}
