@@ -21,5 +21,5 @@
 </script>
 
 {#if Component}
-	<svelte:component this={Component} {...$$props} />
+	<svelte:component this={Component} {...$$props} on:historical />
 {/if}
