@@ -44,7 +44,7 @@ npm run preview           # Preview production build
 ```
 .github/workflows/          # publish.yml (GitHub Pages), docker-publish.yml (ghcr.io)
 .husky/pre-commit          # Runs lint-staged
-docker/                    # Dockerfile, nginx.conf, docker-compose files
+docker/                    # Dockerfile, nginx.conf, podman compose files
 docs/                      # 13 .md files: CONTRIBUTING, ARCHITECTURE, TESTING, etc.
 public/                    # Static assets: sw.js, manifest.json, global.css, img/
 scripts/inject-version.js  # Post-build: injects package.json version into sw.js
@@ -80,9 +80,9 @@ package.json               # Scripts and dependencies
 
 **Docker Usage**:
 ```bash
-docker-compose --profile dev up              # Dev with hot reload (port 5173)
-docker-compose --profile prod up --build     # Production build (port 8080)
-docker compose -f docker-compose.simple.yml up  # Pre-built image
+podman compose --profile dev up              # Dev with hot reload (port 5173)
+podman compose --profile prod up --build     # Production build (port 8080)
+podman compose -f docker-compose.simple.yml up  # Pre-built image
 ```
 
 ## Validation Checklist (Before Merge/Deploy)
