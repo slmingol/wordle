@@ -104,8 +104,11 @@
 		</Setting>
 		<div class="links">
 			<a href="https://github.com/slmingol/wordle" target="_blank" rel="noreferrer">Leave a ⭐</a>
+			<span class="separator">•</span>
 			<a href="https://github.com/slmingol/wordle/issues" target="_blank" rel="noreferrer">Report a Bug</a>
+			<span class="separator">•</span>
 			<a href="https://www.thewordfinder.com/wordle-solver/" target="_blank" rel="noreferrer">Wordle Solver</a>
+			<span class="separator">•</span>
 			<a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>
 		</div>
 	</div>
@@ -123,7 +126,8 @@
 		color: var(--fg-secondary);
 		display: flex;
 		flex-wrap: wrap;
-		gap: 1rem;
+		align-items: center;
+		gap: 0.75rem;
 	}
 	.links a {
 		color: inherit;
@@ -131,6 +135,10 @@
 	}
 	.links a:hover {
 		text-decoration: underline;
+	}
+	.links .separator {
+		color: var(--border-primary);
+		user-select: none;
 	}
 	:global(.settings-top > div) {
 		padding: 16px 0;
