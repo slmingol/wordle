@@ -119,12 +119,22 @@
 	}
 	.links {
 		font-size: var(--fs-medium);
-		border-bottom: 1px solid var(--border-primary);
-		color: var(--fg-secondary);
+		border-top: 1px solid var(--border-primary);
+		padding: 16px 0;
 		display: flex;
-		justify-content: space-between;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: 1rem;
+		row-gap: 0.75rem;
+	}
+	.links a {
+		color: var(--color-correct);
+		text-decoration: none;
+		transition: opacity 0.2s, text-decoration 0.2s;
+		
+		&:hover {
+			opacity: 0.7;
+			text-decoration: underline;
+		}
 	}
 	:global(.settings-top > div) {
 		padding: 16px 0;
