@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+	<meta http-equiv="Content-Security-Policy" 
+		content="default-src 'self'; 
+				 script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; 
+				 style-src 'self' 'unsafe-inline'; 
+				 img-src 'self' data: https:; 
+				 font-src 'self' data:; 
+				 connect-src 'self' https://api.dictionaryapi.dev https://www.google-analytics.com; 
+				 frame-ancestors 'none'; 
+				 base-uri 'self'; 
+				 form-action 'self';">
+
+	<meta name="theme-color" content="#6aaa64" />
+	<link rel="manifest" href="manifest.json">
+	<link rel="shortcut icon" href="img/logo_32x32.png" type="image/x-icon">
+	<link rel="apple-touch-icon" href="img/logo_192x192.png" />
+	
+	<!-- Preload critical resources -->
+	<link rel="preload" href="global.css" as="style">
+	<link rel="stylesheet" href="global.css">
+	
+	<!-- DNS prefetch for external resources -->
+	<link rel="dns-prefetch" href="https://api.dictionaryapi.dev">
+	<link rel="dns-prefetch" href="https://www.google-analytics.com">
+
+	<meta name="author" content="MikhaD">
+	<meta name="description"
+		content="Wordle with infinite, hourly and daily modes. Double tap on a word to learn it's definition.">
+	<meta name="keywords"
+		content="wordle, infinite wordle, wordle infinite, infinate wordle, infinte wordle, unlimited, daily wordle, wordle+, word game, puzzle, game">
+
+	<!-- FB Meta Tags -->
+	<meta property="og:url" content="https://mikhad.github.io/wordle/">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="Wordle+ | An infinite word guessing game">
+	<meta property="og:description" content="Guess the word in 6 tries. Play daily, hourly and infinite modes.">
+	<meta property="og:image" content="https://mikhad.github.io/wordle/img/og_1200x630.png">
+
+	<!-- Google Analytics - Loaded only with user consent via CookieConsent component -->
+	<meta name="google-site-verification" content="nfr4xQiyHWYkamHQq6M7E9kXoXp8tmNihRU0c5yXjlw" />
+	<script>
+		// PWA Service worker
+		if (document.location.origin === "https://mikhad.github.io") {
+			if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
+		}
+	</script>
+
+	<!-- changed to something more suited to being the title of a tab in App.svelte. This title is for SEO -->
+	<title>Infinite wordle - Play unlimited wordles | Wordle+</title>
+  <script type="module" crossorigin src="/wordle/index-v2.1.1.js"></script>
+  <link rel="modulepreload" crossorigin href="/wordle/assets/vendor-DDJfCkXU.js">
+  <link rel="modulepreload" crossorigin href="/wordle/assets/words-wcE7W2Lh.js">
+  <link rel="stylesheet" crossorigin href="/wordle/index-v2.1.1.css">
+</head>
+
+<body>
+</body>
+
+</html>
