@@ -6,6 +6,10 @@ package-lock.json
 test.html
 setVersion.mjs
 
+# Local configuration files
+*.local.*
+docker-compose.local.yml
+
 # Editor files
 .vscode/
 .idea/
