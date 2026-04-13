@@ -107,6 +107,9 @@
 			<a href="https://github.com/MikhaD/wordle/issues" target="_blank" rel="noreferrer">
 				Report a Bug
 			</a>
+			<a href="https://www.thewordfinder.com/wordle-solver/" target="_blank" rel="noreferrer">
+				Wordle Solver
+			</a>
 			<a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">
 				Privacy Policy
 			</a>
