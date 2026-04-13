@@ -122,9 +122,15 @@
 		border-bottom: 1px solid var(--border-primary);
 		color: var(--fg-secondary);
 		display: flex;
-		justify-content: space-between;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: 1rem;
+	}
+	.links a {
+		color: inherit;
+		text-decoration: none;
+	}
+	.links a:hover {
+		text-decoration: underline;
 	}
 	:global(.settings-top > div) {
 		padding: 16px 0;
