@@ -5,3 +5,7 @@
 package-lock.json
 test.html
 setVersion.mjs
+
+# Editor files
+.vscode/
+.idea/
