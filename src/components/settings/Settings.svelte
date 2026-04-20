@@ -103,13 +103,22 @@
 			</svelte:fragment>
 		</Setting>
 		<div class="links">
-			<a href="https://github.com/slmingol/wordle" target="_blank" rel="noreferrer">Leave a ⭐</a>
-			<span class="separator">•</span>
-			<a href="https://github.com/slmingol/wordle/issues" target="_blank" rel="noreferrer">Report a Bug</a>
-			<span class="separator">•</span>
-			<a href="https://www.thewordfinder.com/wordle-solver/" target="_blank" rel="noreferrer">Wordle Solver</a>
-			<span class="separator">•</span>
-			<a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>
+			<div class="links-row">
+				<a href="https://github.com/slmingol/wordle" target="_blank" rel="noreferrer">Leave a ⭐</a>
+				<span class="separator">•</span>
+				<a href="https://github.com/slmingol/wordle/issues" target="_blank" rel="noreferrer"
+					>Report a Bug</a
+				>
+				<span class="separator">•</span>
+				<a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer"
+					>Privacy Policy</a
+				>
+			</div>
+			<div class="links-row">
+				<a href="https://www.thewordfinder.com/wordle-solver/" target="_blank" rel="noreferrer"
+					>Wordle Solver</a
+				>
+			</div>
 		</div>
 	</div>
 </div>
@@ -125,7 +134,13 @@
 		border-bottom: 1px solid var(--border-primary);
 		color: var(--fg-secondary);
 		display: flex;
-		flex-wrap: wrap;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 0;
+	}
+	.links-row {
+		display: flex;
 		align-items: center;
 		gap: 0.75rem;
 	}
