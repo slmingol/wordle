@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getContext } from "svelte";
+	import { getContext, onMount } from "svelte";
 	import { custom_event } from "svelte/internal";
 	import type { Toaster } from ".";
 	import { GameMode } from "../../enums";
@@ -17,12 +17,18 @@
 	let numValue = "";
 	let linkMode: GameMode;
 	let newWordNum: number;
+	let currentGameNum = 1;
+	let maxGameNum = 1;
+
+	$: maxGameNum = getWordNumber($mode, true) - 1;
+	$: currentGameNum = Math.min(currentGameNum, maxGameNum);
 
 	function reset() {
 		linkValue = "";
 		numValue = "";
 		validLink = false;
 		validNumber = false;
+		currentGameNum = 1;
 	}
 
 	function validateNumber(num: number, wordNum: number) {
@@ -66,6 +72,7 @@
 		toaster.pop(`${GameMode[$mode]} wordle #${newWordNum}`, 2);
 		reset();
 	}
+	
 	mode.subscribe(() => {
 		if (!showSettings) {
 			reset();
@@ -79,6 +86,39 @@
 			submit(e);
 		}
 	}
+
+	function navigateBackward() {
+		if (currentGameNum > 1) {
+			currentGameNum--;
+			numValue = String(currentGameNum);
+			validNumber = validateNumber(+numValue, getWordNumber($mode, true));
+		}
+	}
+
+	function navigateForward() {
+		if (currentGameNum < maxGameNum) {
+			currentGameNum++;
+			numValue = String(currentGameNum);
+			validNumber = validateNumber(+numValue, getWordNumber($mode, true));
+		}
+	}
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === "ArrowLeft") {
+			e.preventDefault();
+			navigateBackward();
+		} else if (e.key === "ArrowRight") {
+			e.preventDefault();
+			navigateForward();
+		}
+	}
+
+	onMount(() => {
+		window.addEventListener("keydown", handleKeydown);
+		return () => {
+			window.removeEventListener("keydown", handleKeydown);
+		};
+	});
 </script>
 
 <h3>Play a historical game</h3>
@@ -97,16 +137,35 @@
 <div>Paste in a link</div>
 <h3>or</h3>
 <div class="number">
+	<button
+		class="arrow-button"
+		aria-label="Previous game"
+		disabled={currentGameNum <= 1}
+		on:click={navigateBackward}
+	>
+		◀
+	</button>
 	<form>
 		<input
 			type="number"
 			bind:value={numValue}
 			placeholder="Example: 1"
 			class:valid={validNumber}
-			on:input={() => (validNumber = validateNumber(+numValue, getWordNumber($mode, true)))}
+			on:input={() => {
+				currentGameNum = +numValue || 1;
+				validNumber = validateNumber(+numValue, getWordNumber($mode, true));
+			}}
 			on:keydown={onInput}
 		/>
 	</form>
+	<button
+		class="arrow-button"
+		aria-label="Next game"
+		disabled={currentGameNum >= maxGameNum}
+		on:click={navigateForward}
+	>
+		▶
+	</button>
 	<select bind:value={$mode}>
 		{#each modes as mode, i}
 			<option value={i}>{mode}</option>
@@ -164,9 +223,33 @@
 	}
 	.number {
 		display: flex;
-		gap: 1rem;
+		gap: 0.5rem;
+		align-items: center;
 		form {
 			flex: 1;
+		}
+	}
+	.arrow-button {
+		background-color: var(--color-correct);
+		border: none;
+		border-radius: 4px;
+		color: var(--color-tone-1);
+		font-size: 1.2rem;
+		padding: 0.5rem 0.75rem;
+		cursor: pointer;
+		transition: opacity 0.15s ease;
+		min-width: 2.5rem;
+		height: 2.5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		&:hover:not(:disabled) {
+			opacity: 0.8;
+		}
+		&:disabled {
+			background-color: var(--fg-secondary);
+			cursor: not-allowed;
+			opacity: 0.5;
 		}
 	}
 	.button {
