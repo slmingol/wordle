@@ -7,7 +7,7 @@
 	import { getWordNumber, modeData, newSeed } from "../../utils";
 
 	export let showSettings: boolean;
-	export let showHistorical: boolean = true;
+	export let showHistorical: boolean;
 
 	const toaster = getContext<Toaster>("toaster");
 
