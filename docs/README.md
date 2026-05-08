@@ -30,7 +30,7 @@ Hosted on GitHub pages [here](https://mikhad.github.io/wordle/).
 - Right clicking the row below the last submitted word will tell you how many possibilities there are taking all previous information into account.
 - The game mode is reflected in the url, allowing you to share a game mode directly.
 - You can share a link to a specific game number, allowing you to play historical games, and share specific rounds of the faster changing modes with your friends.
-- You can access previous games from the settings menu by inputting a game number or link.
+- You can access previous games from the settings menu by inputting a game number or link, or by using the arrow buttons/keys to navigate backward and forward through historical games.
 - Service worker which allows the game to be easily downloaded as a progressive web app and run offline.
 - Give Up button.
 
