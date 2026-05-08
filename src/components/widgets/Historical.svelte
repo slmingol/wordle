@@ -61,6 +61,10 @@
 		const newMode = validNumber ? $mode : linkMode;
 		const currentModeData = modeData.modes[newMode];
 
+		// Close modals first
+		showHistorical = false;
+		showSettings = false;
+
 		currentModeData.historical = true;
 		currentModeData.seed = newSeed(
 			$mode,
@@ -68,9 +72,6 @@
 		);
 		mode.set(newMode, true);
 
-		e.currentTarget.dispatchEvent(custom_event("close", null, { bubbles: true }));
-		showSettings = false;
-		showHistorical = false;
 		toaster.pop(`${GameMode[$mode]} wordle #${newWordNum}`, 2);
 		reset();
 	}
