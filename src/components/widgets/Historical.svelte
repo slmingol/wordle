@@ -7,6 +7,7 @@
 	import { getWordNumber, modeData, newSeed } from "../../utils";
 
 	export let showSettings: boolean;
+	export let showHistorical: boolean = true;
 
 	const toaster = getContext<Toaster>("toaster");
 
@@ -69,6 +70,7 @@
 
 		e.currentTarget.dispatchEvent(custom_event("close", null, { bubbles: true }));
 		showSettings = false;
+		showHistorical = false;
 		toaster.pop(`${GameMode[$mode]} wordle #${newWordNum}`, 2);
 		reset();
 	}

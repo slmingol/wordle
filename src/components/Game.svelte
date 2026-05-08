@@ -281,7 +281,7 @@
 </Modal>
 
 <Modal bind:visible={showHistorical}>
-	<Historical bind:showSettings />
+	<Historical bind:showSettings bind:showHistorical />
 </Modal>
 
 <style lang="scss">
