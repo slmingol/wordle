@@ -146,7 +146,9 @@
 		disabled={currentGameNum <= 1}
 		on:click={navigateBackward}
 	>
-		◀
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+			<path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+		</svg>
 	</button>
 	<form>
 		<input
@@ -167,7 +169,9 @@
 		disabled={currentGameNum >= maxGameNum}
 		on:click={navigateForward}
 	>
-		▶
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+			<path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+		</svg>
 	</button>
 	<select bind:value={$mode}>
 		{#each modes as mode, i}
@@ -246,6 +250,11 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		svg {
+			width: 1.2rem;
+			height: 1.2rem;
+			fill: currentColor;
+		}
 		&:hover:not(:disabled) {
 			opacity: 0.8;
 		}
