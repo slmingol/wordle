@@ -1,0 +1,116 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/MikhaD/wordle.git
+
+      - name: Fetch upstream
+        run: git fetch upstream main
+
+      - name: Check for new upstream commits
+        id: check
+        run: |
+          COUNT=$(git log HEAD..upstream/main --oneline | wc -l | tr -d ' ')
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          if [ "$COUNT" -gt "0" ]; then
+            echo "New upstream commits: $COUNT"
+            git log HEAD..upstream/main --oneline
+          else
+            echo "Already up to date with upstream."
+          fi
+
+      - name: Create sync branch and merge
+        if: steps.check.outputs.count > 0
+        id: merge
+        run: |
+          BRANCH="sync/upstream-$(date +%Y-%m-%d)"
+          git checkout -b "$BRANCH"
+          if git merge upstream/main --no-edit -m "chore: merge upstream MikhaD/wordle into fork"; then
+            git push origin "$BRANCH"
+            echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+            echo "conflicts=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Merge has conflicts — pushing branch for manual resolution"
+            git add -A
+            git commit -m "chore: merge upstream MikhaD/wordle (CONFLICTS — needs manual resolution)"
+            git push origin "$BRANCH"
+            echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+            echo "conflicts=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open PR
+        if: steps.check.outputs.count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="${{ steps.merge.outputs.branch }}"
+          CONFLICTS="${{ steps.merge.outputs.conflicts }}"
+          COUNT="${{ steps.check.outputs.count }}"
+          COMMITS=$(git log origin/main..upstream/main --oneline | head -20)
+
+          if [ "$CONFLICTS" = "true" ]; then
+            TITLE="chore: sync upstream ($COUNT commits) — CONFLICTS need resolution"
+            BODY="## Upstream sync (conflicts)
+
+          Merge from [MikhaD/wordle](https://github.com/MikhaD/wordle) has **conflicts** that need manual resolution before merging.
+
+          **New upstream commits ($COUNT):**
+          \`\`\`
+          $COMMITS
+          \`\`\`
+
+          ### To resolve
+          \`\`\`bash
+          git checkout $BRANCH
+          git status   # see conflicted files
+          # resolve conflicts, then:
+          git add .
+          git commit --amend --no-edit
+          git push --force-with-lease origin $BRANCH
+          \`\`\`"
+          else
+            TITLE="chore: sync upstream ($COUNT commits)"
+            BODY="## Upstream sync
+
+          Clean merge from [MikhaD/wordle](https://github.com/MikhaD/wordle).
+
+          **New upstream commits ($COUNT):**
+          \`\`\`
+          $COMMITS
+          \`\`\`"
+          fi
+
+          gh pr create \
+            --title "$TITLE" \
+            --body "$BODY" \
+            --base main \
+            --head "$BRANCH" \
+            --label "upstream-sync" 2>/dev/null || \
+          gh pr create \
+            --title "$TITLE" \
+            --body "$BODY" \
+            --base main \
+            --head "$BRANCH"
