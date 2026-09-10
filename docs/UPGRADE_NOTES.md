@@ -158,8 +158,8 @@ None - this update maintains backward compatibility with existing code.
 ## Version Compatibility
 
 This project now requires:
-- Node.js 18+ (recommended 20+)
-- npm 9+ (recommended 10+)
+- Node.js 24+
+- npm 10+
 
 ---
 

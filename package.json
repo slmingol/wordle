@@ -21,14 +21,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MikhaD/wordle.git"
+    "url": "git+https://github.com/slmingol/wordle.git"
   },
   "keywords": [],
-  "author": "MikhaD",
+  "author": "slmingol",
   "bugs": {
-    "url": "https://github.com/MikhaD/wordle/issues"
+    "url": "https://github.com/slmingol/wordle/issues"
   },
-  "homepage": "https://github.com/MikhaD/wordle#readme",
+  "homepage": "https://github.com/slmingol/wordle#readme",
+  "engines": {
+    "node": ">=24"
+  },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@testing-library/jest-dom": "^6.9.1",
