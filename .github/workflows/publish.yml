@@ -12,6 +12,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5

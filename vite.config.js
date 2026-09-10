@@ -9,10 +9,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        // Use modern Sass API to avoid deprecation warnings
         api: 'modern-compiler',
-        // Silence deprecation warnings if needed
-        silenceDeprecations: ['legacy-js-api'],
       },
     },
   },
