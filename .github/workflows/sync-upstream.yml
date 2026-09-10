@@ -42,75 +42,75 @@ jobs:
             echo "Already up to date with upstream."
           fi
 
-      - name: Create sync branch and merge
+      - name: Merge upstream into main (clean)
         if: steps.check.outputs.count > 0
         id: merge
         run: |
-          BRANCH="sync/upstream-$(date +%Y-%m-%d)"
-          git checkout -b "$BRANCH"
-          if git merge upstream/main --no-edit -m "chore: merge upstream MikhaD/wordle into fork"; then
-            git push origin "$BRANCH"
-            echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
-            echo "conflicts=false" >> "$GITHUB_OUTPUT"
+          COUNT="${{ steps.check.outputs.count }}"
+          COMMITS=$(git log HEAD..upstream/main --oneline | head -20)
+
+          if git merge upstream/main --no-edit -m "chore: sync $COUNT commits from upstream MikhaD/wordle"; then
+            git push origin main
+            echo "result=pushed" >> "$GITHUB_OUTPUT"
+            echo "commits=$COMMITS" >> "$GITHUB_OUTPUT"
           else
-            echo "Merge has conflicts — pushing branch for manual resolution"
+            echo "Merge has conflicts — opening PR for manual resolution"
+            git merge --abort
+            BRANCH="sync/upstream-$(date +%Y-%m-%d)"
+            git checkout -b "$BRANCH"
+            git merge upstream/main --no-edit -m "chore: sync upstream MikhaD/wordle (CONFLICTS)" || true
             git add -A
-            git commit -m "chore: merge upstream MikhaD/wordle (CONFLICTS — needs manual resolution)"
+            git commit --allow-empty -m "chore: sync upstream MikhaD/wordle (CONFLICTS — needs manual resolution)"
             git push origin "$BRANCH"
+            echo "result=conflict" >> "$GITHUB_OUTPUT"
             echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
-            echo "conflicts=true" >> "$GITHUB_OUTPUT"
+            echo "commits=$COMMITS" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Open PR
-        if: steps.check.outputs.count > 0
+      - name: Open PR (conflicts only)
+        if: steps.merge.outputs.result == 'conflict'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH="${{ steps.merge.outputs.branch }}"
-          CONFLICTS="${{ steps.merge.outputs.conflicts }}"
           COUNT="${{ steps.check.outputs.count }}"
-          COMMITS=$(git log origin/main..upstream/main --oneline | head -20)
-
-          if [ "$CONFLICTS" = "true" ]; then
-            TITLE="chore: sync upstream ($COUNT commits) — CONFLICTS need resolution"
-            BODY="## Upstream sync (conflicts)
-
-          Merge from [MikhaD/wordle](https://github.com/MikhaD/wordle) has **conflicts** that need manual resolution before merging.
-
-          **New upstream commits ($COUNT):**
-          \`\`\`
-          $COMMITS
-          \`\`\`
-
-          ### To resolve
-          \`\`\`bash
-          git checkout $BRANCH
-          git status   # see conflicted files
-          # resolve conflicts, then:
-          git add .
-          git commit --amend --no-edit
-          git push --force-with-lease origin $BRANCH
-          \`\`\`"
-          else
-            TITLE="chore: sync upstream ($COUNT commits)"
-            BODY="## Upstream sync
-
-          Clean merge from [MikhaD/wordle](https://github.com/MikhaD/wordle).
-
-          **New upstream commits ($COUNT):**
-          \`\`\`
-          $COMMITS
-          \`\`\`"
-          fi
+          COMMITS="${{ steps.merge.outputs.commits }}"
 
           gh pr create \
-            --title "$TITLE" \
-            --body "$BODY" \
+            --title "chore: sync upstream ($COUNT commits) — CONFLICTS need resolution" \
+            --body "## Upstream sync (conflicts)
+
+Merge from [MikhaD/wordle](https://github.com/MikhaD/wordle) has **conflicts** that need manual resolution before merging.
+
+**New upstream commits ($COUNT):**
+\`\`\`
+$COMMITS
+\`\`\`
+
+### To resolve
+\`\`\`bash
+git fetch origin
+git checkout $BRANCH
+git status   # see conflicted files
+# resolve conflicts, then:
+git add .
+git commit --amend --no-edit
+git push --force-with-lease origin $BRANCH
+\`\`\`" \
             --base main \
             --head "$BRANCH" \
             --label "upstream-sync" 2>/dev/null || \
           gh pr create \
-            --title "$TITLE" \
-            --body "$BODY" \
+            --title "chore: sync upstream ($COUNT commits) — CONFLICTS need resolution" \
+            --body "Conflicts from upstream MikhaD/wordle — resolve manually." \
             --base main \
             --head "$BRANCH"
+
+      - name: Summary
+        if: steps.check.outputs.count > 0
+        run: |
+          if [ "${{ steps.merge.outputs.result }}" = "pushed" ]; then
+            echo "✓ Pushed ${{ steps.check.outputs.count }} upstream commits directly to main"
+          else
+            echo "⚠ Conflicts detected — PR opened for manual resolution"
+          fi
