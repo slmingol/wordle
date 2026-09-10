@@ -4,13 +4,13 @@
 # Stage 1: Base
 FROM node:24-alpine AS base
 WORKDIR /app
-COPY ../package*.json ./
+COPY package*.json ./
 
 # Stage 2: Development
 FROM base AS development
 ENV NODE_ENV=development
 RUN npm install
-COPY ../ .
+COPY . .
 EXPOSE 5173
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
@@ -18,7 +18,7 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 FROM base AS builder
 ENV NODE_ENV=production
 RUN npm install --production=false
-COPY ../ .
+COPY . .
 RUN npm run build
 
 # Stage 4: Production
