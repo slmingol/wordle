@@ -32,74 +32,79 @@ class Tile {
 	}
 }
 
-class WordData {
-	public letterCounts: Map<string, [number, boolean]>;
+/**
+ * Accumulates constraints from revealed board clues to filter candidate words.
+ * Tracks per-position letter restrictions and global letter count requirements.
+ */
+class WordLetterData {
+	public letterCounts: Map<string, {count: number, exact: boolean}>;
 	private notSet: Set<string>;
 	public word: Tile[];
 	constructor() {
 		this.notSet = new Set<string>();
-		this.letterCounts = new Map<string, [number, boolean]>();
+		this.letterCounts = new Map<string, {count: number, exact: boolean}>();
 		this.word = [];
 		for (let col = 0; col < COLS; ++col) {
 			this.word.push(new Tile());
 		}
 	}
+	/**
+	 * Marks a letter's count as exact (whatever number it is currently set to is exactly how many times it appears).
+	 * If the letter was never seen as yellow/green, excludes it globally.
+	 */
 	confirmCount(char: string) {
 		const c = this.letterCounts.get(char);
 		if (!c) {
 			this.not(char);
 		} else {
-			c[1] = true;
+			c.exact = true;
 		}
 	}
+	/** Returns whether a letter's count has been confirmed as exact. */
 	countConfirmed(char: string) {
 		const val = this.letterCounts.get(char);
-		return val ? val[1] : false;
+		return val ? val.exact : false;
 	}
+	/** Sets or updates the known occurrence count for a letter. */
 	setCount(char: string, count: number) {
 		const c = this.letterCounts.get(char);
 		if (!c) {
-			this.letterCounts.set(char, [count, false]);
+			this.letterCounts.set(char, {count, exact: false});
 		} else {
-			c[0] = count;
+			c.count = count;
 		}
 	}
-	incrementCount(char: string) {
-		++this.letterCounts.get(char)[0];
-	}
+	/** Adds a letter to the global exclusion list (not in the word at all). */
 	not(char: string) {
 		this.notSet.add(char);
 	}
+	/** Returns whether a letter is in the global exclusion list. */
 	inGlobalNotList(char: string) {
 		return this.notSet.has(char);
 	}
+	/** Returns the full set of letters excluded from a given position (global + position-specific). */
 	lettersNotAt(pos: number) {
 		return new Set([...this.notSet, ...this.word[pos].notSet]);
 	}
 }
 
 export function getRowData(n: number, board: GameBoard) {
-	const wd = new WordData();
+	const wd = new WordLetterData();
 	for (let row = 0; row < n; ++row) {
-		const occurred = new Set<string>();
+		const rowLetterCount = new Map<string, number>();
+		const blackLetters = new Set<string>();
 		for (let col = 0; col < COLS; ++col) {
 			const state = board.state[row][col];
 			const char = board.words[row][col];
 			if (state === "⬛") {
-				wd.confirmCount(char);
+				blackLetters.add(char);
 				// if char isn't in the global not list add it to the not list for that position
 				if (!wd.inGlobalNotList(char)) {
 					wd.word[col].not(char);
 				}
 				continue;
 			}
-			// If this isn't the first time this letter has occurred in this row
-			if (occurred.has(char)) {
-				wd.incrementCount(char);
-			} else if (!wd.countConfirmed(char)) {
-				occurred.add(char);
-				wd.setCount(char, 1);
-			}
+			rowLetterCount.set(char, (rowLetterCount.get(char) || 0) + 1);
 			if (state === "🟩") {
 				wd.word[col].value = char;
 			} else {
@@ -107,18 +112,26 @@ export function getRowData(n: number, board: GameBoard) {
 				wd.word[col].not(char);
 			}
 		}
+		// Merge per-row counts, then confirm exact counts from black tiles
+		for (const [char, count] of rowLetterCount) {
+			wd.setCount(char, count);
+		}
+		for (const char of blackLetters) {
+			wd.confirmCount(char);
+		}
 	}
 
 	let exp = "";
 	for (let pos = 0; pos < wd.word.length; ++pos) {
-		exp += wd.word[pos].value ? wd.word[pos].value : `[^${[...wd.lettersNotAt(pos)].join(" ")}]`;
+		exp += wd.word[pos].value ? wd.word[pos].value : `[^${[...wd.lettersNotAt(pos)].join("")}]`;
 	}
 	return (word: string) => {
 		if (new RegExp(exp).test(word)) {
 			const chars = word.split("");
-			for (const e of wd.letterCounts) {
-				const occurrences = countOccurrences(chars, e[0]);
-				if (!occurrences || (e[1][1] && occurrences !== e[1][0])) return false;
+			for (const letter of wd.letterCounts.keys()) {
+				const occurrences = countOccurrences(chars, letter);
+				const {count, exact} = wd.letterCounts.get(letter);
+				if (!occurrences || (exact && occurrences !== count)) return false;
 			}
 			return true;
 		}

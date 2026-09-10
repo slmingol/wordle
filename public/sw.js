@@ -1,7 +1,7 @@
 //! VERSION NUMBER IS INJECTED DURING BUILD - DO NOT MANUALLY EDIT
 //! Update version in package.json only
 // Version is replaced during build process from package.json
-const version = "1.5.2"; // This will be replaced by build script
+const version = "1.5.3"; // This will be replaced by build script
 const cacheName = `wordle+-v${version}`;
 
 const assetsToCache = [

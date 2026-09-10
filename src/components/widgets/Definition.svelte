@@ -25,7 +25,7 @@
 	/** The maximum number of alternate definitions to provide*/
 	export let alternates = 9;
 
-	async function getWordData(word: string): Promise<DictionaryEntry> {
+	async function getWordDefinitionData(word: string): Promise<DictionaryEntry> {
 		if (!cache.has(word)) {
 			// Rate limiting check
 			if (!canMakeRequest()) {
@@ -68,7 +68,7 @@
 </script>
 
 <div class="def">
-	{#await getWordData(word)}
+	{#await getWordDefinitionData(word)}
 		<h4>Fetching definition...</h4>
 	{:then data}
 		<h2>{word}</h2>

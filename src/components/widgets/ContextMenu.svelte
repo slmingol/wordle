@@ -4,8 +4,8 @@
 	export let x = 0;
 	export let y = 0;
 	export let word = "";
-	export let pAns: number;
-	export let pSols: number;
+	export let possibleSolutions: number;
+	export let validGuesses: number;
 	const width = +getComputedStyle(document.body).getPropertyValue("--game-width") / 2;
 
 	$: x = window.innerWidth - x < width ? window.innerWidth - width : x;
@@ -16,18 +16,18 @@
 		<div>
 			Considering all hints, this row had:
 			<br /><br />
-			{pAns} possible answer{pAns > 1 ? "s" : ""}
+			{possibleSolutions} possible solution{possibleSolutions > 1 ? "s" : ""}
 			<br />
-			{pSols} valid guess{pSols > 1 ? "es" : ""}
+			{validGuesses} valid guess{validGuesses > 1 ? "es" : ""}
 		</div>
 		<Definition {word} alternates={1} />
 	{:else}
 		<div>
-			Considering all hints, there {pAns > 1 ? "are" : "is"}:
+			Considering all hints, there {possibleSolutions > 1 ? "are" : "is"}:
 			<br /><br />
-			{pAns} possible answer{pAns > 1 ? "s" : ""}
+			{possibleSolutions} possible solution{possibleSolutions > 1 ? "s" : ""}
 			<br />
-			{pSols} valid guess{pSols > 1 ? "es" : ""}
+			{validGuesses} valid guess{validGuesses > 1 ? "es" : ""}
 		</div>
 	{/if}
 </div>

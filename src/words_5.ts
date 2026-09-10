@@ -1,4 +1,5 @@
 const words = {
+	// Words that could be the final answer
 	words: [
 		"cigar",
 		"rebut",
@@ -2316,6 +2317,7 @@ const words = {
 		"rural",
 		"shave",
 	],
+	// Words that are valid guesses, but could not be the final answer
 	valid: [
 		"aahed",
 		"aalii",
